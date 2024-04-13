@@ -2,9 +2,6 @@ package ubb.mppbackend.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import ubb.mppbackend.business.UsersService;
 import ubb.mppbackend.exceptions.RepositoryException;

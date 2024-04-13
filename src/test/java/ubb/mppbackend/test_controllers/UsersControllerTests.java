@@ -2,15 +2,12 @@ package ubb.mppbackend.test_controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import ubb.mppbackend.business.UsersService;
 import ubb.mppbackend.controllers.UsersController;
@@ -34,7 +31,6 @@ public class UsersControllerTests {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
     @MockBean private UsersService usersService;
-    @MockBean private SimpMessagingTemplate messagingTemplate;
 
     @Test
     public void testGetUserSuccess() throws Exception {
