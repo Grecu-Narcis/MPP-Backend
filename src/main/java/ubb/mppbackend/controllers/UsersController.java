@@ -88,6 +88,9 @@ public class UsersController {
 
     @GetMapping("/ping")
     public ResponseEntity<String> ping() {
+        System.out.println("----------------ping-------------");
+        System.out.println(Thread.currentThread().getId());
         return ResponseEntity.ok().body("Ping success!");
     }
+
 }
