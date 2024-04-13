@@ -1,6 +1,9 @@
 package ubb.mppbackend.business;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.exceptions.UserValidatorException;
@@ -10,14 +13,26 @@ import ubb.mppbackend.repositories.UsersRepository;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UsersService {
     private final UsersRepository usersRepository;
 
+    private final SimpMessagingTemplate messagingTemplate;
+
     @Autowired
-    public UsersService(UsersRepository usersRepository) {
+    public UsersService(UsersRepository usersRepository, SimpMessagingTemplate messagingTemplate) {
         this.usersRepository = usersRepository;
+        this.messagingTemplate = messagingTemplate;
+    }
+
+    @Scheduled(fixedRate = 5, timeUnit = TimeUnit.SECONDS)
+    @Async
+    public void sendData() {
+        System.out.println("This runs every 5 seconds!");
+
+        messagingTemplate.convertAndSend("/topic/users", this.usersRepository.generateFakeData(5));
     }
 
     public User getById(UUID idToSearch) throws RepositoryException {

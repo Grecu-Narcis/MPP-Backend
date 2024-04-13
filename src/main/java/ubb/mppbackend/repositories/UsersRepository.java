@@ -18,7 +18,7 @@ public class UsersRepository  {
         this.users = new ArrayList<>();
         this.isAscending = true;
 
-        this.generateFakeData();
+        this.generateFakeData(6);
 
         this.users.add(new User("Grecu", "Narcis", "narcis.jpg", 20));
         this.users.add(new User("Bogdan", "Ciornohac", "bogdan.jpg", 20));
@@ -28,12 +28,17 @@ public class UsersRepository  {
         this.users.sort(Comparator.comparingInt(User::getAge));
     }
 
-    private void generateFakeData() {
-        for (int i = 0; i < 6; i++) {
-            User fakeUser = this.generateFakeUser();
+    public List<User> generateFakeData(int numberOfUsers) {
+        List<User> fakeUsers = new ArrayList<>();
 
-            this.users.add(fakeUser);
+        for (int i = 0; i < numberOfUsers; i++) {
+            User fakeUser = this.generateFakeUser();
+            fakeUsers.add(fakeUser);
         }
+
+        fakeUsers.forEach(this::addUser);
+
+        return fakeUsers;
     }
 
     private User generateFakeUser() {

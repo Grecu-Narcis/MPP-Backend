@@ -14,7 +14,7 @@ public class UsersServiceTests {
 
     public UsersServiceTests() {
         UsersRepository usersRepository = new UsersRepository();
-        this.usersService = new UsersService(usersRepository);
+        this.usersService = new UsersService(usersRepository, null);
     }
 
     @Test
