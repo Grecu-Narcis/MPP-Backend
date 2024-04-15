@@ -33,7 +33,7 @@ public class UsersControllerTests {
 
     @Test
     public void testGetUserSuccess() throws Exception {
-        UUID userId = UUID.randomUUID();
+        Long userId = (long) 2;
 
         Mockito.when(usersService.getById(userId)).
             thenReturn(new User("test", "test", "test", 23));
@@ -45,7 +45,7 @@ public class UsersControllerTests {
 
     @Test
     public void testGetUserNotFound() throws Exception {
-        UUID userId = UUID.randomUUID();
+        Long userId = (long) -1;
 
         Mockito.when(usersService.getById(userId)).thenThrow(new RepositoryException("User not found"));
 
@@ -74,7 +74,7 @@ public class UsersControllerTests {
     @Test
     public void testAddUserSuccess() throws Exception {
         User user = new User("test", "test", "test", 23);
-
+        user.setId((long) 2);
         mockMvc.perform(post(endPoint + "/addUser")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(user)))
@@ -86,7 +86,7 @@ public class UsersControllerTests {
     @Test
     public void testAddUserFailsValidator() throws Exception {
         User user = new User("te", "t", "test", 0);
-
+        user.setId((long) 2);
         Mockito.doThrow(UserValidatorException.class).when(usersService).addUser(user);
 
         mockMvc.perform(post(endPoint + "/addUser")
@@ -98,6 +98,7 @@ public class UsersControllerTests {
     @Test
     public void testUpdateUserSuccess() throws Exception {
         User user = new User("test", "test", "test", 23);
+        user.setId((long) 2);
 
         mockMvc.perform(put(endPoint + "/updateUser")
             .contentType(MediaType.APPLICATION_JSON)
@@ -110,6 +111,7 @@ public class UsersControllerTests {
     @Test
     public void testUpdateUserNotFound() throws Exception {
         User user = new User("test", "test", "test", 23);
+        user.setId((long) 2);
 
         Mockito.doThrow(new RepositoryException("User not found!")).when(usersService).updateUser(user);
 
@@ -122,6 +124,7 @@ public class UsersControllerTests {
     @Test
     public void testUpdateUserFailsValidator() throws Exception {
         User user = new User("test", "test", "test", 0);
+        user.setId((long) 2);
 
         Mockito.doThrow(UserValidatorException.class).when(usersService).updateUser(user);
 
@@ -133,7 +136,7 @@ public class UsersControllerTests {
 
     @Test
     public void testDeleteUser() throws Exception {
-        UUID idToRemove = UUID.randomUUID();
+        Long idToRemove = (long) 2;
         mockMvc.perform(delete(endPoint + "/delete/" + idToRemove))
             .andExpect(status().isOk());
     }

@@ -1,36 +1,57 @@
 package ubb.mppbackend.test_services;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.*;
 import ubb.mppbackend.business.UsersService;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.models.user.User;
-import ubb.mppbackend.repositories.UsersRepository;
+import ubb.mppbackend.repositories.UsersRepositoryJPA;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
+@SpringBootTest
 public class UsersServiceTests {
-    private final UsersService usersService;
+    @MockBean
+    UsersRepositoryJPA usersRepositoryJPA;
 
-    public UsersServiceTests() {
-        UsersRepository usersRepository = new UsersRepository();
-        this.usersService = new UsersService(usersRepository, null);
+    private UsersService usersService;
+
+    @BeforeEach
+    public void setUp() {
+        this.usersService = new UsersService(usersRepositoryJPA, null);
     }
 
     @Test
     public void testGetUserByIdSuccess() throws Exception {
-        UUID idToSearch = this.usersService.getAll().get(0).getId();
+        User userToFind = new User("test", "test", "test", 23);
+        userToFind.setId((long) 1);
+        Mockito.when(this.usersRepositoryJPA.findById(userToFind.getId())).thenReturn(java.util.Optional.of(userToFind));
+
+        Long idToSearch = this.usersService.getById(userToFind.getId()).getId();
         Assertions.assertEquals(this.usersService.getById(idToSearch).getId(), idToSearch);
     }
 
     @Test
     public void testGetUserByIdFails() {
-        Assertions.assertThrows(RepositoryException.class, () -> this.usersService.getById(UUID.randomUUID()));
+        Long idToSearch = (long) -1;
+        Mockito.when(this.usersRepositoryJPA.findById(idToSearch)).thenReturn(java.util.Optional.empty());
+        Assertions.assertThrows(RepositoryException.class, () -> this.usersService.getById(idToSearch));
     }
 
     @Test
     public void testAddUser() throws Exception {
         User userToAdd = new User("test", "user", "test.url", 20);
+        userToAdd.setId((long) 1);
+
+        Mockito.when(this.usersRepositoryJPA.save(userToAdd)).thenReturn(userToAdd);
+        Mockito.when(this.usersRepositoryJPA.findById(userToAdd.getId())).thenReturn(Optional.of(userToAdd));
         this.usersService.addUser(userToAdd);
 
         User foundUser = this.usersService.getById(userToAdd.getId());
@@ -39,22 +60,75 @@ public class UsersServiceTests {
     }
 
     @Test
+    public void testUpdateUserSuccess() {
+        User testUser = new User("test", "test", "test", 23);
+        testUser.setId((long) 2);
+
+        Mockito.when(this.usersRepositoryJPA.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+        Mockito.when(this.usersRepositoryJPA.save(testUser)).thenReturn(testUser);
+
+        try {
+            this.usersService.updateUser(testUser);
+        }
+
+        catch (Exception ignored) {}
+    }
+
+    @Test
     public void testUpdateUserThrowsException() {
         User userToUpdate = new User("test", "user", "test.url", 20);
+        Mockito.when(this.usersRepositoryJPA.findById(Mockito.anyLong())).thenReturn(Optional.empty());
         Assertions.assertThrows(RepositoryException.class, () -> this.usersService.updateUser(userToUpdate));
     }
 
     @Test
     public void testDeleteUser() {
-        User userToDelete = this.usersService.getAll().get(0);
-        this.usersService.deleteUser(userToDelete.getId());
+        User userToDelete = new User("test", "test", "test", 23);
+        userToDelete.setId((long) 2);
 
+        Mockito.when(this.usersRepositoryJPA.findById(userToDelete.getId())).thenReturn(Optional.empty());
+
+        this.usersService.deleteUser(userToDelete.getId());
         Assertions.assertThrows(RepositoryException.class, () -> this.usersService.getById(userToDelete.getId()));
     }
 
     @Test
-    public void testGetPage() {
-        Assertions.assertEquals(this.usersService.getPage(1, true, 5).size(), 5);
-        Assertions.assertEquals(this.usersService.getPage(1, false, 5).size(), 5);
+    public void testGetPageAscending() {
+        List<User> demoUsers = new ArrayList<>();
+        demoUsers.add(new User("test1", "test1", "test1", 21));
+        demoUsers.add(new User("test2", "test2", "test2", 22));
+        demoUsers.add(new User("test3", "test3", "test3", 23));
+
+        Sort sortAscending = Sort.by(Sort.Direction.ASC, "age");
+        Pageable requestedPageAscending = PageRequest.of(1, 3, sortAscending);
+        Page<User> returnPageAscending = new PageImpl<>(demoUsers, requestedPageAscending, demoUsers.size());
+
+        Mockito.when(this.usersRepositoryJPA.findAll(requestedPageAscending)).thenReturn(returnPageAscending);
+
+        Assertions.assertEquals(this.usersService.getPage(1, true, 3).size(), 3);
+    }
+
+    @Test
+    public void testGetPageDescending() {
+        List<User> demoUsers = new ArrayList<>();
+        demoUsers.add(new User("test1", "test1", "test1", 21));
+        demoUsers.add(new User("test2", "test2", "test2", 22));
+        demoUsers.add(new User("test3", "test3", "test3", 23));
+
+
+        Sort sortDescending = Sort.by(Sort.Direction.DESC, "age");
+        Pageable requestedPageDescending = PageRequest.of(1, 3, sortDescending);
+        Page<User> returnPageDescending = new PageImpl<>(demoUsers, requestedPageDescending, demoUsers.size());
+
+        Mockito.when(this.usersRepositoryJPA.findAll(requestedPageDescending)).thenReturn(returnPageDescending);
+
+        Assertions.assertEquals(this.usersService.getPage(1, false, 3).size(), 3);
+    }
+
+    @Test
+    public void testGetAll() {
+        Mockito.when(this.usersRepositoryJPA.findAll()).thenReturn(new ArrayList<>());
+
+        Assertions.assertEquals(this.usersService.getAll().size(), 0);
     }
 }

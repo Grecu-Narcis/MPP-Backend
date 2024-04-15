@@ -26,7 +26,7 @@ public class UsersController {
     public ResponseEntity<User> getUser(@PathVariable String userId) {
         System.out.println(userId);
         try {
-            User requiredUser = this.usersService.getById(UUID.fromString(userId));
+            User requiredUser = this.usersService.getById(Long.parseLong(userId));
             return ResponseEntity.ok().body(requiredUser);
         }
 
@@ -78,7 +78,7 @@ public class UsersController {
 
     @DeleteMapping("/delete/{id}")
     public void deleteUser(@PathVariable("id") String userId) {
-        this.usersService.deleteUser(UUID.fromString(userId));
+        this.usersService.deleteUser(Long.parseLong(userId));
     }
 
     @GetMapping("/countUsers")
