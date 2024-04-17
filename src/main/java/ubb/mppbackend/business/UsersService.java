@@ -61,7 +61,7 @@ public class UsersService {
 
     private User generateFakeUser() {
         Faker fakerUserGenerator = new Faker();
-
+        
         Name fakeName = fakerUserGenerator.name();
         int age = fakerUserGenerator.number().numberBetween(18, 45);
 
