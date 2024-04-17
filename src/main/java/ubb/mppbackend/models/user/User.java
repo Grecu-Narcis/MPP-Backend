@@ -1,58 +1,43 @@
 package ubb.mppbackend.models.user;
 
-import java.util.UUID;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import ubb.mppbackend.models.car.Car;
 
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false)
+    private Long id;
 
-    private final UUID id;
+    @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
+
+    @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
+
+    @Column(name = "picture_url", nullable = false, columnDefinition = "TEXT")
     private String pictureUrl;
+
+    @Column(name = "age", nullable = false)
     private int age;
+
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private List<Car> cars;
 
     public User(String firstName, String lastName, String pictureUrl, int age) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.pictureUrl = pictureUrl;
         this.age = age;
-
-        this.id = UUID.randomUUID();
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String newFirstName) {
-        this.firstName = newFirstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String newLastName) {
-        this.lastName = newLastName;
-    }
-
-    public String getPictureUrl() {
-        return pictureUrl;
-    }
-
-    public void setPictureUrl(String newUrl) {
-        this.pictureUrl = newUrl;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int newAge) {
-        this.age = newAge;
     }
 
     public void update(User newUser) {

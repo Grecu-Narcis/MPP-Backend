@@ -10,7 +10,7 @@ public class UserTests {
     @Test
     public void testGetId() {
         User user = new User("test", "test", "test", 23);
-        UUID id = user.getId();
+        Long id = user.getId();
         Assertions.assertEquals(user.getId(), id);
     }
 
@@ -93,6 +93,7 @@ public class UserTests {
     @Test
     public void testEqualsSuccess() {
         User user1 = new User("test", "test", "test", 23);
+        user1.setId((long) 2);
 
         Assertions.assertEquals(user1, user1);
     }
@@ -101,6 +102,8 @@ public class UserTests {
     public void testEqualsFailure() {
         User user1 = new User("test", "test", "test", 23);
         User user2 = new User("test", "test", "test", 23);
+        user1.setId((long) 2);
+        user2.setId((long) 3);
 
         Assertions.assertNotEquals(user1, user2);
         Assertions.assertNotEquals(user1, null);
