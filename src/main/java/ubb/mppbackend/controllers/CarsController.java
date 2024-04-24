@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cars")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class CarsController {
     private final CarsService carsService;
 
@@ -27,6 +27,12 @@ public class CarsController {
         return ResponseEntity.ok().body(cars);
     }
 
+    @GetMapping("/getPageByOwnerId")
+    public ResponseEntity<List<Car>> getPageByOwnerId(@RequestParam String ownerId, @RequestParam String page, @RequestParam String pageSize) {
+        List<Car> cars = this.carsService.getPageOfCarsByOwnerId(Long.parseLong(ownerId), Integer.parseInt(page), Integer.parseInt(pageSize));
+        return ResponseEntity.ok().body(cars);
+    }
+
     @GetMapping("/getCar/{carId}")
     public ResponseEntity<Car> getCar(@PathVariable String carId) {
         try {
@@ -37,6 +43,12 @@ public class CarsController {
         catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/getCarsCount/{ownerId}")
+    public ResponseEntity<Integer> getCarsCountByOwnerId(@PathVariable String ownerId) {
+        int count = this.carsService.countCarsByOwnerId(Long.parseLong(ownerId));
+        return ResponseEntity.ok().body(count);
     }
 
     @PutMapping("/updateCar")

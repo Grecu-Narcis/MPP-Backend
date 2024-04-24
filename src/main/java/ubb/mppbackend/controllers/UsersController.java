@@ -7,13 +7,13 @@ import ubb.mppbackend.business.UsersService;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.exceptions.UserValidatorException;
 import ubb.mppbackend.models.user.User;
+import ubb.mppbackend.models.user.UserDTO;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class UsersController {
     private final UsersService usersService;
 
@@ -23,11 +23,13 @@ public class UsersController {
     }
 
     @GetMapping("/getUser/{userId}")
-    public ResponseEntity<User> getUser(@PathVariable String userId) {
+    public ResponseEntity<UserDTO> getUser(@PathVariable String userId) {
         System.out.println(userId);
         try {
             User requiredUser = this.usersService.getById(Long.parseLong(userId));
-            return ResponseEntity.ok().body(requiredUser);
+            UserDTO requiredUserDTO = new UserDTO(requiredUser);
+
+            return ResponseEntity.ok().body(requiredUserDTO);
         }
 
         catch (RepositoryException e) {
@@ -37,15 +39,21 @@ public class UsersController {
 
     @GetMapping("/getPage")
     @ResponseBody
-    public List<User> getPage(@RequestParam("page") int pageId, @RequestParam("isAscending") boolean isAscending,
+    public List<UserDTO> getPage(@RequestParam("page") int pageId, @RequestParam("isAscending") boolean isAscending,
                               @RequestParam("pageSize") int pageSize) {
-        return this.usersService.getPage(pageId, isAscending, pageSize);
+        return this.usersService.getPage(pageId, isAscending, pageSize)
+            .stream()
+            .map(UserDTO::new)
+            .toList();
     }
 
     @GetMapping("/getAll")
     @ResponseBody
-    public List<User> getAll() {
-        return this.usersService.getAll();
+    public List<UserDTO> getAll() {
+        return this.usersService.getAll()
+            .stream()
+            .map(UserDTO::new)
+            .toList();
     }
 
     @PostMapping("/addUser")
@@ -53,6 +61,18 @@ public class UsersController {
         try {
             this.usersService.addUser(userToAdd);
             return ResponseEntity.ok().body("User added successfully!");
+        }
+
+        catch (UserValidatorException e) {
+            return ResponseEntity.badRequest().body("Invalid user data!");
+        }
+    }
+
+    @PostMapping("/addUsers")
+    public ResponseEntity<String> addUsers(@RequestBody List<User> usersToAdd) {
+        try {
+            this.usersService.addUsers(usersToAdd);
+            return ResponseEntity.ok().body("Users added successfully!");
         }
 
         catch (UserValidatorException e) {
@@ -83,13 +103,12 @@ public class UsersController {
 
     @GetMapping("/countUsers")
     public int getUsersCount() {
-        return this.usersService.getAll().size();
+        return this.usersService.countUsers();
     }
 
     @GetMapping("/ping")
     public ResponseEntity<String> ping() {
         System.out.println("----------------ping-------------");
-        System.out.println(Thread.currentThread().getId());
         return ResponseEntity.ok().body("Ping success!");
     }
 

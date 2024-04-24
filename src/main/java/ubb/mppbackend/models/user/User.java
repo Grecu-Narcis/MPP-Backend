@@ -30,8 +30,11 @@ public class User {
     @Column(name = "age", nullable = false)
     private int age;
 
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Car> cars;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private ProfileImage profileImage;
 
     public User(String firstName, String lastName, String pictureUrl, int age) {
         this.firstName = firstName;
