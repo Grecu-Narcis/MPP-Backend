@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.exceptions.UserValidatorException;
 import ubb.mppbackend.models.user.User;
+import ubb.mppbackend.models.user.UserMockGenerator;
 import ubb.mppbackend.models.user.UserValidator;
 import ubb.mppbackend.repositories.UsersRepositoryJPA;
 
@@ -32,6 +33,9 @@ public class UsersService {
         this.usersRepository = usersRepository;
         this.messagingTemplate = messagingTemplate;
 
+//        UserMockGenerator.generateFakeData(10000, this.usersRepository);
+//        this.generateFakeData(10000);
+//        this.usersRepository.save(new User("Darina", "Stir", "darina.jpg", 19));
 //        this.usersRepository.save(new User("Grecu", "Narcis", "narcis.jpg", 20));
 //        this.usersRepository.save(new User("Bogdan", "Ciornohac", "bogdan.jpg", 20));
 //        this.usersRepository.save(new User("Medeea", "Condurache", "medeea.jpg", 21));
@@ -41,31 +45,9 @@ public class UsersService {
     @Scheduled(fixedRate = 5, timeUnit = TimeUnit.SECONDS)
     @Async
     public void sendData() {
-        System.out.println("This runs every 5 seconds!");
+        // System.out.println("This runs every 5 seconds!");
 
         // messagingTemplate.convertAndSend("/topic/users", this.generateFakeData(5));
-    }
-
-    public List<User> generateFakeData(int numberOfUsers) {
-        List<User> fakeUsers = new ArrayList<>();
-
-        for (int i = 0; i < numberOfUsers; i++) {
-            User fakeUser = this.generateFakeUser();
-            fakeUsers.add(fakeUser);
-        }
-
-        this.usersRepository.saveAll(fakeUsers);
-
-        return fakeUsers;
-    }
-
-    private User generateFakeUser() {
-        Faker fakerUserGenerator = new Faker();
-        
-        Name fakeName = fakerUserGenerator.name();
-        int age = fakerUserGenerator.number().numberBetween(18, 45);
-
-        return new User(fakeName.lastName(), fakeName.firstName(), "dog.jpg", age);
     }
 
     public User getById(Long idToSearch) throws RepositoryException {
@@ -105,5 +87,16 @@ public class UsersService {
 
     public List<User> getAll() {
         return this.usersRepository.findAll();
+    }
+
+    public int countUsers() {
+        return this.usersRepository.countUsers();
+    }
+
+    public void addUsers(List<User> usersToAdd) throws UserValidatorException {
+        for (User userToAdd : usersToAdd) {
+            UserValidator.validate(userToAdd);
+            this.usersRepository.save(userToAdd);
+        }
     }
 }

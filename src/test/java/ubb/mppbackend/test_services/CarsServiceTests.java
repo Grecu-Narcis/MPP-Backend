@@ -25,7 +25,7 @@ public class CarsServiceTests {
 
     @BeforeEach
     public void setUp() {
-        this.carsService = new CarsService(carsRepositoryJPA);
+        this.carsService = new CarsService(carsRepositoryJPA, null);
     }
 
     @Test
