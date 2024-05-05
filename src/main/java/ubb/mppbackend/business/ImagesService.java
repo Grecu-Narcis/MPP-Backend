@@ -26,7 +26,13 @@ public class ImagesService {
     }
 
     public String getImageUrl(Long userId) {
-        return profileImagesRepository.findByUserId(userId).getImageUrl();
+        Optional<ProfileImage> requiredImage = profileImagesRepository.findByUserId(userId);
+
+        if (requiredImage.isEmpty()) {
+            return null;
+        }
+
+        return profileImagesRepository.findByUserId(userId).get().getImageUrl();
     }
 
     public void saveImageToStorage(String uploadDirectory, Long userId, MultipartFile imageToSave) throws Exception {
@@ -46,5 +52,21 @@ public class ImagesService {
         profileImage.setUser(requiredUser.get());
 
         profileImagesRepository.save(profileImage);
+    }
+
+    public byte[] getImage(String uploadDirectory, Long userId) throws Exception {
+        Optional<User> requiredUser = usersRepository.findById(userId);
+        if (requiredUser.isEmpty()) {
+            throw new Exception("User not found");
+        }
+
+        Optional<ProfileImage> profileImage = profileImagesRepository.findByUserId(userId);
+        if (profileImage.isEmpty()) {
+            Path filePath = Path.of(uploadDirectory, "dog.jpg");
+            return Files.readAllBytes(filePath);
+        }
+
+        Path filePath = Path.of(uploadDirectory, profileImage.get().getImageUrl());
+        return Files.readAllBytes(filePath);
     }
 }
