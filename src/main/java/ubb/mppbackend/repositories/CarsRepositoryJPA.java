@@ -8,10 +8,33 @@ import ubb.mppbackend.models.car.Car;
 
 import java.util.List;
 
+/**
+ * Repository interface for accessing Car entities using JPA.
+ */
 public interface CarsRepositoryJPA extends JpaRepository<Car, Long> {
+    /**
+     * Retrieves a list of cars owned by a specific owner.
+     *
+     * @param ownerId  The ID of the owner whose cars are to be retrieved.
+     * @return         A list of cars owned by the specified owner.
+     */
     List<Car> findAllByOwnerId(Long ownerId);
+
+    /**
+     * Retrieves a page of cars owned by a specific owner with pagination support.
+     *
+     * @param ownerId   The ID of the owner whose cars are to be retrieved.
+     * @param pageable  The pagination information (e.g., page number, page size, sorting).
+     * @return          A page containing cars owned by the specified owner.
+     */
     Page<Car> findAllByOwnerId(Long ownerId, Pageable pageable);
 
+    /**
+     * Counts the number of cars owned by a specific owner.
+     *
+     * @param ownerId  The ID of the owner whose cars are to be counted.
+     * @return         The total count of cars owned by the specified owner.
+     */
     @Query("SELECT count(*) FROM cars c where c.owner.id = ?1")
     int countCarsByOwnerId(Long ownerId);
 }

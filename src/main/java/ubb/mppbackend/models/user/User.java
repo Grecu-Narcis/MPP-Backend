@@ -8,6 +8,10 @@ import ubb.mppbackend.models.car.Car;
 
 import java.util.List;
 
+/**
+ * Represents a user entity with basic information.
+ * This entity is mapped to the "users" table in the database.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,6 +40,14 @@ public class User {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private ProfileImage profileImage;
 
+    /**
+     * Constructs a new User with the specified details.
+     *
+     * @param firstName  The first name of the user.
+     * @param lastName   The last name of the user.
+     * @param pictureUrl The URL of the user's profile picture.
+     * @param age        The age of the user.
+     */
     public User(String firstName, String lastName, String pictureUrl, int age) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -43,6 +55,11 @@ public class User {
         this.age = age;
     }
 
+    /**
+     * Updates the user's information based on the provided newUser object.
+     *
+     * @param newUser The new User object containing updated information.
+     */
     public void update(User newUser) {
         this.setFirstName(newUser.getFirstName());
         this.setLastName(newUser.getLastName());
@@ -50,6 +67,12 @@ public class User {
         this.setAge(newUser.getAge());
     }
 
+    /**
+     * Compares this User object with another object for equality based on ID.
+     *
+     * @param obj The object to compare with.
+     * @return true if the objects are equal (i.e., have the same ID), otherwise false.
+     */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof User userToCompare))
