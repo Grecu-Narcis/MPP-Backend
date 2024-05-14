@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ubb.mppbackend.business.ImagesService;
 import ubb.mppbackend.business.UsersService;
 import ubb.mppbackend.controllers.UsersController;
 import ubb.mppbackend.exceptions.RepositoryException;
@@ -15,7 +16,6 @@ import ubb.mppbackend.exceptions.UserValidatorException;
 import ubb.mppbackend.models.user.User;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -30,6 +30,7 @@ public class UsersControllerTests {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
     @MockBean private UsersService usersService;
+    @MockBean private ImagesService imagesService;
 
     @Test
     public void testGetUserSuccess() throws Exception {
@@ -136,7 +137,7 @@ public class UsersControllerTests {
 
     @Test
     public void testDeleteUser() throws Exception {
-        Long idToRemove = (long) 2;
+        long idToRemove = 2;
         mockMvc.perform(delete(endPoint + "/delete/" + idToRemove))
             .andExpect(status().isOk());
     }
@@ -144,7 +145,6 @@ public class UsersControllerTests {
     @Test
     public void testGetUsersCount() throws Exception {
         Mockito.when(usersService.getAll()).thenReturn(new ArrayList<>());
-
 
         mockMvc.perform(get(endPoint + "/countUsers"))
             .andExpect(status().isOk())

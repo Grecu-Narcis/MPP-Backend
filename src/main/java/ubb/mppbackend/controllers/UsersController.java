@@ -3,7 +3,6 @@ package ubb.mppbackend.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import ubb.mppbackend.business.ImagesService;
 import ubb.mppbackend.business.UsersService;
 import ubb.mppbackend.exceptions.RepositoryException;
@@ -11,23 +10,38 @@ import ubb.mppbackend.exceptions.UserValidatorException;
 import ubb.mppbackend.models.user.User;
 import ubb.mppbackend.models.user.UserDTO;
 
-import java.awt.*;
+import java.io.IOException;
 import java.util.List;
 
+/**
+ * Controller class for managing user-related operations via RESTful endpoints.
+ * Handles requests related to user retrieval, addition, modification, and deletion.
+ * Provides endpoints for fetching users, adding users, updating users, deleting users,
+ * and other utility operations like counting users and testing connectivity.
+ */
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "*")
 public class UsersController {
     private final UsersService usersService;
     private final ImagesService imagesService;
-    private final String uploadDirectory = "src/main/resources/profile-images";
 
+    /**
+     * Constructor to initialize UsersController with required services.
+     * @param usersService The service handling user-related operations.
+     * @param imagesService The service handling image-related operations.
+     */
     @Autowired
     public UsersController(UsersService usersService, ImagesService imagesService) {
         this.usersService = usersService;
         this.imagesService = imagesService;
     }
 
+    /**
+     * Retrieve a user by ID.
+     * @param userId The unique identifier of the user to retrieve.
+     * @return ResponseEntity containing the requested UserDTO on success, or 404 if not found.
+     */
     @GetMapping("/getUser/{userId}")
     public ResponseEntity<UserDTO> getUser(@PathVariable String userId) {
         System.out.println(userId);
@@ -43,6 +57,13 @@ public class UsersController {
         }
     }
 
+    /**
+     * Retrieve a page of users.
+     * @param pageId The page number to retrieve.
+     * @param isAscending Flag indicating whether to sort in ascending order.
+     * @param pageSize The number of users per page.
+     * @return List of UserDTOs representing the requested user page.
+     */
     @GetMapping("/getPage")
     @ResponseBody
     public List<UserDTO> getPage(@RequestParam("page") int pageId, @RequestParam("isAscending") boolean isAscending,
@@ -53,6 +74,10 @@ public class UsersController {
             .toList();
     }
 
+    /**
+     * Retrieve all users.
+     * @return List of UserDTOs representing all users.
+     */
     @GetMapping("/getAll")
     @ResponseBody
     public List<UserDTO> getAll() {
@@ -62,6 +87,11 @@ public class UsersController {
             .toList();
     }
 
+    /**
+     * Add a new user.
+     * @param userToAdd The user object to add.
+     * @return ResponseEntity indicating success or failure of the operation.
+     */
     @PostMapping("/addUser")
     public ResponseEntity<String> addUser(@RequestBody User userToAdd) {
         try {
@@ -78,6 +108,11 @@ public class UsersController {
         }
     }
 
+    /**
+     * Add multiple users.
+     * @param usersToAdd List of users to add.
+     * @return ResponseEntity indicating success or failure of the operation.
+     */
     @PostMapping("/addUsers")
     public ResponseEntity<String> addUsers(@RequestBody List<User> usersToAdd) {
         try {
@@ -90,6 +125,11 @@ public class UsersController {
         }
     }
 
+    /**
+     * Update an existing user.
+     * @param userToUpdate The user object containing updated information.
+     * @return ResponseEntity indicating success or failure of the operation.
+     */
     @PutMapping("/updateUser")
     public ResponseEntity<String> updateUser(@RequestBody User userToUpdate) {
         try {
@@ -106,20 +146,40 @@ public class UsersController {
         }
     }
 
+    /**
+     * Delete a user by ID.
+     * @param userId The unique identifier of the user to delete.
+     */
     @DeleteMapping("/delete/{id}")
     public void deleteUser(@PathVariable("id") String userId) {
-        this.usersService.deleteUser(Long.parseLong(userId));
+        try {
+            this.imagesService.removeUserProfileImage(Long.parseLong(userId));
+            this.usersService.deleteUser(Long.parseLong(userId));
+            System.out.println("--------------------------user removed-------------------------------------------");
+        }
+
+        catch (IOException e) {
+            System.out.println("======================================");
+            System.out.println(e.getMessage());
+        }
     }
 
+    /**
+     * Get the count of all users.
+     * @return The total number of users.
+     */
     @GetMapping("/countUsers")
     public int getUsersCount() {
         return this.usersService.countUsers();
     }
 
+    /**
+     * Test endpoint for verifying server connectivity (ping).
+     * @return ResponseEntity with success message if ping is successful.
+     */
     @GetMapping("/ping")
-    public ResponseEntity<String> ping() {
+    public ResponseEntity<String> testServerConnectivity() {
         System.out.println("----------------ping-------------");
         return ResponseEntity.ok().body("Ping success!");
     }
-
 }

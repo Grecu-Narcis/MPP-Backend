@@ -6,6 +6,9 @@ import ubb.mppbackend.repositories.CarsRepositoryJPA;
 
 import java.util.*;
 
+/**
+ * Utility class for generating fake/mock Car objects and adding them to a repository in batches.
+ */
 public class CarMockGenerator {
     private static final List<String> brands = Arrays.asList(
         "Toyota", "Honda", "Ford", "Chevrolet", "BMW"
@@ -20,6 +23,12 @@ public class CarMockGenerator {
         modelsByBrand.put("BMW", Arrays.asList("3 Series", "5 Series", "X3", "X5", "X7"));
     }
 
+    /**
+     * Generates a fake/mock Car object with random attributes based on predefined data.
+     *
+     * @param users List of User objects to randomly assign an owner to the generated Car.
+     * @return A generated Car object with random attributes.
+     */
     public static Car generateFakeCar(List<User> users) {
         Faker faker = new Faker();
         Random random = new Random();
@@ -36,6 +45,13 @@ public class CarMockGenerator {
         return new Car(brand, model, year, price, image, mileage, fuelType, owner);
     }
 
+    /**
+     * Generates and adds a specified number of fake/mock Car objects to a repository in batches.
+     *
+     * @param numberOfCars   Number of fake Car objects to generate and add.
+     * @param users          List of User objects to randomly assign owners to the generated Cars.
+     * @param carsRepository Repository to which the generated Cars will be added.
+     */
     public static void addFakeCars(int numberOfCars, List<User> users, CarsRepositoryJPA carsRepository) {
         List<Car> cars = new ArrayList<>();
         for (int i = 0; i < numberOfCars; i++) {

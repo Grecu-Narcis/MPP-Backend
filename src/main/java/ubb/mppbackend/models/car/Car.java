@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import ubb.mppbackend.models.user.User;
 
+/**
+ * Represents a car entity with details such as brand, model, year, price, etc.
+ * This entity is mapped to the "cars" table in the database.
+ */
 @Getter
 @Setter
 @ToString
@@ -43,6 +47,17 @@ public class Car {
     @JsonIgnore
     private User owner;
 
+    /**
+     * Constructs a new car with the specified details.
+     *
+     * @param brand      The brand of the car.
+     * @param model      The model of the car.
+     * @param year       The manufacturing year of the car.
+     * @param price      The price of the car.
+     * @param pictureUrl The URL to the picture of the car.
+     * @param mileage    The mileage of the car.
+     * @param fuelType   The fuel type of the car.
+     */
     public Car(String brand, String model, int year, double price, String pictureUrl, int mileage, String fuelType) {
         this.brand = brand;
         this.model = model;
@@ -53,6 +68,18 @@ public class Car {
         this.fuelType = fuelType;
     }
 
+    /**
+     * Constructs a new car with the specified details and owner.
+     *
+     * @param brand      The brand of the car.
+     * @param model      The model of the car.
+     * @param year       The manufacturing year of the car.
+     * @param price      The price of the car.
+     * @param pictureUrl The URL to the picture of the car.
+     * @param mileage    The mileage of the car.
+     * @param fuelType   The fuel type of the car.
+     * @param owner      The owner of the car.
+     */
     public Car(String brand, String model, int year, double price, String pictureUrl, int mileage, String fuelType, User owner) {
         this.brand = brand;
         this.model = model;
