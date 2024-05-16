@@ -1,6 +1,7 @@
-package ubb.mppbackend.models.user;
+package ubb.mppbackend.dto;
 
 import lombok.*;
+import ubb.mppbackend.models.user.User;
 
 /**
  * Data Transfer Object (DTO) representing user data.
@@ -15,9 +16,7 @@ public class UserDTO {
     private Long id;
     private String firstName;
     private String lastName;
-    private String pictureUrl;
-    private int age;
-
+    private String email;
     /**
      * Constructs a UserDTO object based on the provided User object.
      *
@@ -27,7 +26,6 @@ public class UserDTO {
         this.id = userToConvert.getId();
         this.firstName = userToConvert.getFirstName();
         this.lastName = userToConvert.getLastName();
-        this.pictureUrl = userToConvert.getPictureUrl();
-        this.age = userToConvert.getAge();
+        this.email = userToConvert.getEmail();
     }
 }

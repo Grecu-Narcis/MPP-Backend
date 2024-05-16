@@ -4,9 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import ubb.mppbackend.models.car.Car;
+import ubb.mppbackend.models.role.Role;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a user entity with basic information.
@@ -14,6 +17,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @Entity(name = "users")
 public class User {
@@ -28,11 +32,11 @@ public class User {
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 
-    @Column(name = "picture_url", nullable = false, columnDefinition = "TEXT")
-    private String pictureUrl;
+    @Column(name="email", nullable = false)
+    private String email;
 
-    @Column(name = "age", nullable = false)
-    private int age;
+    @Column(name="password", nullable = false)
+    private String password;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Car> cars;
@@ -40,19 +44,26 @@ public class User {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private ProfileImage profileImage;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "users_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
     /**
      * Constructs a new User with the specified details.
      *
      * @param firstName  The first name of the user.
      * @param lastName   The last name of the user.
-     * @param pictureUrl The URL of the user's profile picture.
-     * @param age        The age of the user.
+     * @param email      The email address of the user.
+     * @param password   The password of the user.
      */
-    public User(String firstName, String lastName, String pictureUrl, int age) {
+    public User(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.pictureUrl = pictureUrl;
-        this.age = age;
+        this.email = email;
+        this.password = password;
     }
 
     /**
@@ -63,8 +74,8 @@ public class User {
     public void update(User newUser) {
         this.setFirstName(newUser.getFirstName());
         this.setLastName(newUser.getLastName());
-        this.setPictureUrl(newUser.getPictureUrl());
-        this.setAge(newUser.getAge());
+        this.setEmail(newUser.getEmail());
+        this.setPassword(newUser.getPassword());
     }
 
     /**
@@ -79,16 +90,5 @@ public class User {
             return false;
 
         return this.getId().equals(userToCompare.getId());
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-            "id=" + id +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", pictureUrl='" + pictureUrl + '\'' +
-            ", age=" + age +
-            '}';
     }
 }

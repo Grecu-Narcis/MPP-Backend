@@ -21,10 +21,14 @@ import java.util.Optional;
 @Service
 public class CarsService {
     private final CarsRepositoryJPA carsRepository;
+    private final UsersRepositoryJPA usersRepository;
 
     @Autowired
-    public CarsService(CarsRepositoryJPA carsRepository) {
+    public CarsService(CarsRepositoryJPA carsRepository, UsersRepositoryJPA usersRepositoryJPA) {
         this.carsRepository = carsRepository;
+        this.usersRepository = usersRepositoryJPA;
+
+//        CarMockGenerator.addFakeCars(10000, this.usersRepository.findAll(), carsRepository);
     }
 
     /**

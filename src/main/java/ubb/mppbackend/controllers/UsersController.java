@@ -1,14 +1,16 @@
 package ubb.mppbackend.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ubb.mppbackend.business.ImagesService;
 import ubb.mppbackend.business.UsersService;
+import ubb.mppbackend.config.security.JWTUtils;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.exceptions.UserValidatorException;
 import ubb.mppbackend.models.user.User;
-import ubb.mppbackend.models.user.UserDTO;
+import ubb.mppbackend.dto.UserDTO;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.List;
 public class UsersController {
     private final UsersService usersService;
     private final ImagesService imagesService;
+    private final JWTUtils jwtUtils;
 
     /**
      * Constructor to initialize UsersController with required services.
@@ -32,9 +35,10 @@ public class UsersController {
      * @param imagesService The service handling image-related operations.
      */
     @Autowired
-    public UsersController(UsersService usersService, ImagesService imagesService) {
+    public UsersController(UsersService usersService, ImagesService imagesService, JWTUtils jwtUtils) {
         this.usersService = usersService;
         this.imagesService = imagesService;
+        this.jwtUtils = jwtUtils;
     }
 
     /**
@@ -43,8 +47,12 @@ public class UsersController {
      * @return ResponseEntity containing the requested UserDTO on success, or 404 if not found.
      */
     @GetMapping("/getUser/{userId}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable String userId) {
-        System.out.println(userId);
+    public ResponseEntity<UserDTO> getUser(@PathVariable String userId, @RequestHeader("Authorization") String bearerToken) {
+        String authorizedUserId = jwtUtils.getUserIdFromBearerToken(bearerToken);
+
+        if (!authorizedUserId.equals(userId))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
         try {
             User requiredUser = this.usersService.getById(Long.parseLong(userId));
             UserDTO requiredUserDTO = new UserDTO(requiredUser);
