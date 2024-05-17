@@ -15,6 +15,7 @@ import java.util.Base64;
  */
 @RestController
 @RequestMapping("/api/images")
+@CrossOrigin(origins = "*")
 public class ImagesController {
     private final ImagesService profileImagesService;
     private final JWTUtils jwtUtils;

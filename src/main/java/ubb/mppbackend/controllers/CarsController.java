@@ -17,6 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/cars")
+@CrossOrigin(origins = "*")
 public class CarsController {
     private final CarsService carsService;
     private final JWTUtils jwtUtils;
