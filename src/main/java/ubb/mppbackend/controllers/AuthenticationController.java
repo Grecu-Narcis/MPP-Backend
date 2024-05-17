@@ -28,7 +28,6 @@ import java.util.Set;
  */
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
 public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final UsersRepositoryJPA usersRepositoryJPA;
