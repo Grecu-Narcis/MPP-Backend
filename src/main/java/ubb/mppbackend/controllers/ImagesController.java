@@ -44,6 +44,8 @@ public class ImagesController {
                                                    @RequestHeader("Authorization") String bearerToken) {
         String authorizedUserId = jwtUtils.getUserIdFromBearerToken(bearerToken);
 
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
         if (!authorizedUserId.equals(userId.toString()))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
@@ -53,6 +55,8 @@ public class ImagesController {
             String encodedImage = Base64.getEncoder().encodeToString(requiredImage);
             return ResponseEntity.ok().body(encodedImage);
         } catch (Exception e) {
+            System.out.println("@@@@@@@@@@@@@@@@@");
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

@@ -34,17 +34,17 @@ public class CarsControllerTests {
 
         Mockito.when(carsService.getCarById(1L)).thenReturn(testCar);
 
-        mockMvc.perform(get("/api/cars/getCar/1"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.brand", is("mazda")));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/cars/getCar/1"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.brand", Matchers.is("mazda")));
     }
 
     @Test
     public void testGetCarNotFound() throws Exception {
         Mockito.when(carsService.getCarById(1L)).thenThrow(new RepositoryException("Car not found"));
 
-        mockMvc.perform(get("/api/cars/getCar/1"))
-            .andExpect(status().isNotFound());
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/cars/getCar/1"))
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
@@ -56,10 +56,10 @@ public class CarsControllerTests {
 
         Mockito.when(carsService.getCarById(1L)).thenReturn(testCar);
 
-        mockMvc.perform(put("/api/cars/updateCar")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/cars/updateCar")
             .contentType("application/json")
             .content(objectMapper.writeValueAsString(testCar)))
-            .andExpect(status().isOk());
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
@@ -71,10 +71,10 @@ public class CarsControllerTests {
 
         Mockito.when(carsService.getCarById(1L)).thenThrow(new RepositoryException("Car not found"));
 
-        mockMvc.perform(put("/api/cars/updateCar")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/cars/updateCar")
             .contentType("application/json")
             .content(objectMapper.writeValueAsString(testCar)))
-            .andExpect(status().isBadRequest());
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -85,8 +85,8 @@ public class CarsControllerTests {
 
         Mockito.when(carsService.getAllCarsByOwnerId(1L)).thenReturn(List.of(testCar));
 
-        mockMvc.perform(get("/api/cars/getAllByOwnerId/1"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].brand", is("mazda")));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/cars/getAllByOwnerId/1"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$[0].brand", Matchers.is("mazda")));
     }
 }
