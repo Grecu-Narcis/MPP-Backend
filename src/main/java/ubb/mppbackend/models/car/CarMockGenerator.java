@@ -52,6 +52,7 @@ public class CarMockGenerator {
      * @param users          List of User objects to randomly assign owners to the generated Cars.
      * @param carsRepository Repository to which the generated Cars will be added.
      */
+    @SuppressWarnings("unused")
     public static void addFakeCars(int numberOfCars, List<User> users, CarsRepositoryJPA carsRepository) {
         List<Car> cars = new ArrayList<>();
         for (int i = 0; i < numberOfCars; i++) {

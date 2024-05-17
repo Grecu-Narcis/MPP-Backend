@@ -23,9 +23,6 @@ public class UserValidator {
         if (userToValidate.getLastName().length() < 3)
             errors.add("Last name is too short");
 
-        if (userToValidate.getAge() < 0 || userToValidate.getAge() > 100)
-            errors.add("Invalid age");
-
         if (!errors.isEmpty())
             throw new UserValidatorException(errors);
     }

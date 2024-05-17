@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.exceptions.UserValidatorException;
 import ubb.mppbackend.models.user.User;
-import ubb.mppbackend.models.user.UserMockGenerator;
 import ubb.mppbackend.models.user.UserValidator;
 import ubb.mppbackend.repositories.UsersRepositoryJPA;
 
