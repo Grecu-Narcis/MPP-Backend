@@ -24,7 +24,7 @@ import java.util.UUID;
 public class ImagesService {
     ProfileImagesRepositoryJPA profileImagesRepository;
     UsersRepositoryJPA usersRepository;
-    private final String uploadDirectory = "src/main/resources/profile-images";
+    private final String uploadDirectory = "src/main/java/profile-images";
 
     /**
      * Constructs a new ImagesService instance with the specified dependencies.
