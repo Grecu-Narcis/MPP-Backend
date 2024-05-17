@@ -37,7 +37,7 @@ public class UsersControllerTests {
         Long userId = (long) 2;
 
         Mockito.when(usersService.getById(userId)).
-            thenReturn(new User("test", "test", "test", 23));
+            thenReturn(new User("test", "test", "test", "test"));
 
         mockMvc.perform(get(endPoint + "/getUser/" + userId))
             .andExpect(status().isOk())
@@ -74,7 +74,7 @@ public class UsersControllerTests {
 
     @Test
     public void testAddUserSuccess() throws Exception {
-        User user = new User("test", "test", "test", 23);
+        User user = new User("test", "test", "test", "test");
         user.setId((long) 2);
         mockMvc.perform(post(endPoint + "/addUser")
             .contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +86,7 @@ public class UsersControllerTests {
 
     @Test
     public void testAddUserFailsValidator() throws Exception {
-        User user = new User("te", "t", "test", 0);
+        User user = new User("te", "t", "test", "test");
         user.setId((long) 2);
         Mockito.doThrow(UserValidatorException.class).when(usersService).addUser(user);
 
@@ -98,7 +98,7 @@ public class UsersControllerTests {
 
     @Test
     public void testUpdateUserSuccess() throws Exception {
-        User user = new User("test", "test", "test", 23);
+        User user = new User("test", "test", "test", "test");
         user.setId((long) 2);
 
         mockMvc.perform(put(endPoint + "/updateUser")
@@ -111,7 +111,7 @@ public class UsersControllerTests {
 
     @Test
     public void testUpdateUserNotFound() throws Exception {
-        User user = new User("test", "test", "test", 23);
+        User user = new User("test", "test", "test", "test");
         user.setId((long) 2);
 
         Mockito.doThrow(new RepositoryException("User not found!")).when(usersService).updateUser(user);
@@ -124,7 +124,7 @@ public class UsersControllerTests {
 
     @Test
     public void testUpdateUserFailsValidator() throws Exception {
-        User user = new User("test", "test", "test", 0);
+        User user = new User("test", "test", "test", "test");
         user.setId((long) 2);
 
         Mockito.doThrow(UserValidatorException.class).when(usersService).updateUser(user);

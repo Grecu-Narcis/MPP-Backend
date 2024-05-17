@@ -1,10 +1,8 @@
 package ubb.mppbackend.test_services;
 
-import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -30,7 +28,7 @@ public class CarsServiceTests {
 
     @Test
     public void testGetCarByIdSuccess() throws Exception {
-        User testUser = new User("Bogdan", "test", "test.url", 23);
+        User testUser = new User("Bogdan", "test", "test", "test");
         Car carToFind = new Car("Audi", "A4", 2018, 20000, "audi-a4.jpg", 10000, "Diesel", testUser);
         carToFind.setId((long) 1);
         Mockito.when(this.carsRepositoryJPA.findById(carToFind.getId())).thenReturn(java.util.Optional.of(carToFind));
@@ -48,7 +46,7 @@ public class CarsServiceTests {
 
     @Test
     public void testUpdateCar() {
-        User testUser = new User("Bogdan", "test", "test.url", 23);
+        User testUser = new User("Bogdan", "test", "test", "test");
         Car carToUpdate = new Car("Audi", "A4", 2018, 20000, "audi-a4.jpg", 10000, "Diesel", testUser);
         carToUpdate.setId((long) 1);
 
@@ -67,7 +65,7 @@ public class CarsServiceTests {
 
     @Test
     public void testGetAllCarsByOwnerId() {
-        User testUser = new User("Bogdan", "test", "test.url", 23);
+        User testUser = new User("Bogdan", "test", "test", "test");
         Car car1 = new Car("Audi", "A4", 2018, 20000, "audi-a4.jpg", 10000, "Diesel", testUser);
         Car car2 = new Car("BMW", "X6", 2019, 30000, "bmw-x6.jpg", 20000, "Gasoline", testUser);
         Car car3 = new Car("Mercedes", "C180", 2017, 15000, "mercedes-c180.jpg", 30000, "Diesel", testUser);

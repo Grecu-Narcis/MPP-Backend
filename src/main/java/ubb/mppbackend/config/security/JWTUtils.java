@@ -13,6 +13,7 @@ import ubb.mppbackend.repositories.UsersRepositoryJPA;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * Utility class for handling JWT (JSON Web Token) generation, parsing, and validation.
@@ -41,10 +42,12 @@ public class JWTUtils {
      */
     public String generateToken(Authentication authentication) {
         String email = authentication.getName();
-        User requiredUser = this.usersRepositoryJPA.findByEmail(email).get();
+        Optional<User> requiredUser = this.usersRepositoryJPA.findByEmail(email);
+
+        if (requiredUser.isEmpty()) return null;
 
         return Jwts.builder()
-            .claim("userID", requiredUser.getId().toString())
+            .claim("userID", requiredUser.get().getId().toString())
             .issuedAt(new Date())
             .signWith( this.getSigningKey())
             .compact();
