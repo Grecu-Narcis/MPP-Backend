@@ -39,9 +39,9 @@ public class UsersControllerTests {
         Mockito.when(usersService.getById(userId)).
             thenReturn(new User("test", "test", "test", "test"));
 
-        mockMvc.perform(get(endPoint + "/getUser/" + userId))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.firstName", is("test")));
+        mockMvc.perform(MockMvcRequestBuilders.get(endPoint + "/getUser/" + userId))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is("test")));
     }
 
     @Test
@@ -50,38 +50,38 @@ public class UsersControllerTests {
 
         Mockito.when(usersService.getById(userId)).thenThrow(new RepositoryException("User not found"));
 
-        mockMvc.perform(get(endPoint + "/getUser/" + userId))
-            .andExpect(status().isNotFound());
+        mockMvc.perform(MockMvcRequestBuilders.get(endPoint + "/getUser/" + userId))
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
     public void testGetPage() throws Exception {
         Mockito.when(usersService.getPage(1, true, 10)).thenReturn(new ArrayList<>());
 
-        mockMvc.perform(get(endPoint + "/getPage?page=1&isAscending=true&pageSize=10"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", is(new ArrayList<>())));
+        mockMvc.perform(MockMvcRequestBuilders.get(endPoint + "/getPage?page=1&isAscending=true&pageSize=10"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.is(new ArrayList<>())));
     }
 
     @Test
     public void testGetAll() throws Exception {
         Mockito.when(usersService.getAll()).thenReturn(new ArrayList<>());
 
-        mockMvc.perform(get(endPoint + "/getAll"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", is(new ArrayList<>())));
+        mockMvc.perform(MockMvcRequestBuilders.get(endPoint + "/getAll"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.is(new ArrayList<>())));
     }
 
     @Test
     public void testAddUserSuccess() throws Exception {
         User user = new User("test", "test", "test", "test");
         user.setId((long) 2);
-        mockMvc.perform(post(endPoint + "/addUser")
+        mockMvc.perform(MockMvcRequestBuilders.post(endPoint + "/addUser")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(user)))
-            .andExpect(status().isOk()).andReturn();
+            .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 
-        verify(usersService, times(1)).addUser(user);
+        Mockito.verify(usersService, Mockito.times(1)).addUser(user);
     }
 
     @Test
@@ -90,10 +90,10 @@ public class UsersControllerTests {
         user.setId((long) 2);
         Mockito.doThrow(UserValidatorException.class).when(usersService).addUser(user);
 
-        mockMvc.perform(post(endPoint + "/addUser")
+        mockMvc.perform(MockMvcRequestBuilders.post(endPoint + "/addUser")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(user)))
-            .andExpect(status().isBadRequest());
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -101,12 +101,12 @@ public class UsersControllerTests {
         User user = new User("test", "test", "test", "test");
         user.setId((long) 2);
 
-        mockMvc.perform(put(endPoint + "/updateUser")
+        mockMvc.perform(MockMvcRequestBuilders.put(endPoint + "/updateUser")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(user)))
-            .andExpect(status().isOk()).andReturn();
+            .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 
-        verify(usersService, times(1)).updateUser(user);
+        Mockito.verify(usersService, Mockito.times(1)).updateUser(user);
     }
 
     @Test
@@ -116,10 +116,10 @@ public class UsersControllerTests {
 
         Mockito.doThrow(new RepositoryException("User not found!")).when(usersService).updateUser(user);
 
-        mockMvc.perform(put(endPoint + "/updateUser")
+        mockMvc.perform(MockMvcRequestBuilders.put(endPoint + "/updateUser")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(user)))
-            .andExpect(status().isBadRequest());
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -129,31 +129,31 @@ public class UsersControllerTests {
 
         Mockito.doThrow(UserValidatorException.class).when(usersService).updateUser(user);
 
-        mockMvc.perform(put(endPoint + "/updateUser")
+        mockMvc.perform(MockMvcRequestBuilders.put(endPoint + "/updateUser")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(user)))
-            .andExpect(status().isBadRequest());
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
     public void testDeleteUser() throws Exception {
         long idToRemove = 2;
-        mockMvc.perform(delete(endPoint + "/delete/" + idToRemove))
-            .andExpect(status().isOk());
+        mockMvc.perform(MockMvcRequestBuilders.delete(endPoint + "/delete/" + idToRemove))
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     public void testGetUsersCount() throws Exception {
         Mockito.when(usersService.getAll()).thenReturn(new ArrayList<>());
 
-        mockMvc.perform(get(endPoint + "/countUsers"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", is(0)));
+        mockMvc.perform(MockMvcRequestBuilders.get(endPoint + "/countUsers"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.is(0)));
     }
 
     @Test
     public void testPingSuccess() throws Exception {
-        mockMvc.perform(get(endPoint + "/ping"))
-            .andExpect(status().isOk());
+        mockMvc.perform(MockMvcRequestBuilders.get(endPoint + "/ping"))
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }
