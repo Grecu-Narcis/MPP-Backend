@@ -10,7 +10,7 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**") // Apply CORS configuration to specific path patterns
             .allowedOrigins("*") // Allow requests from this origin
-            .allowedMethods("GET", "POST") // Allow only specified HTTP methods
+            .allowedMethods("GET", "POST", "PUT", "DELETE") // Allow only specified HTTP methods
             .allowedHeaders("Content-Type", "Authorization"); // Allow only specified headers
     }
 }
