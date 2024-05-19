@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import ubb.mppbackend.business.EmailService;
 import ubb.mppbackend.config.security.JWTUtils;
 import ubb.mppbackend.dto.AuthResponseDTO;
 import ubb.mppbackend.dto.UserLoginDTO;
@@ -35,6 +36,7 @@ public class AuthenticationController {
     private final RoleRepositoryJPA roleRepositoryJPA;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
+    private final EmailService emailService;
 
     /**
      * Constructs a new AuthenticationController with required dependencies.
@@ -44,15 +46,18 @@ public class AuthenticationController {
      * @param roleRepositoryJPA     The repository for accessing role data.
      * @param passwordEncoder       The password encoder for securely encoding passwords.
      * @param jwtUtils              The utility class for handling JWT (JSON Web Token) operations.
+     * @param emailService          The service for sending emails to users.
      */
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager, UsersRepositoryJPA usersRepositoryJPA,
-                                    RoleRepositoryJPA roleRepositoryJPA, PasswordEncoder passwordEncoder, JWTUtils jwtUtils) {
+                                    RoleRepositoryJPA roleRepositoryJPA, PasswordEncoder passwordEncoder,
+                                    JWTUtils jwtUtils, EmailService emailService) {
         this.authenticationManager = authenticationManager;
         this.usersRepositoryJPA = usersRepositoryJPA;
         this.roleRepositoryJPA = roleRepositoryJPA;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
+        this.emailService = emailService;
     }
 
     /**
@@ -78,6 +83,9 @@ public class AuthenticationController {
         userToRegister.setRoles(Set.of(userRole.get()));
 
         this.usersRepositoryJPA.save(userToRegister);
+
+        this.emailService.sendEmail(registerRequest.getEmail(), "Account created successfully",
+            "Welcome to TravelWheels!\nYour account has been created successfully!");
 
         return ResponseEntity.ok().body("User registered successfully!");
     }
