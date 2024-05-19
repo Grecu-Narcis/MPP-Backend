@@ -51,7 +51,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/login",
                     "/api/auth/register",
-                    "/api/users/ping").permitAll()
+                    "/api/users/ping",
+                    "/websocket/**").permitAll()
                 .anyRequest().authenticated()
             );
 
