@@ -8,9 +8,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**") // Apply CORS configuration to specific path patterns
-            .allowedOrigins("*") // Allow requests from this origin
-            .allowedMethods("GET", "POST", "PUT", "DELETE") // Allow only specified HTTP methods
-            .allowedHeaders("Content-Type", "Authorization"); // Allow only specified headers
+        registry.addMapping("/**") // Apply CORS configuration to specific path patterns
+            .allowedOriginPatterns("*") // Allow requests from this origin
+            .allowedMethods("*") // Allow only specified HTTP methods
+            .allowedHeaders("*"); // Allow only specified headers
     }
+
 }
