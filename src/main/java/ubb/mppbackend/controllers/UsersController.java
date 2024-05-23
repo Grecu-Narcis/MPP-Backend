@@ -3,6 +3,7 @@ package ubb.mppbackend.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ubb.mppbackend.business.ImagesService;
 import ubb.mppbackend.business.UsersService;
@@ -86,6 +87,7 @@ public class UsersController {
      * Retrieve all users.
      * @return List of UserDTOs representing all users.
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAll")
     @ResponseBody
     public List<UserDTO> getAll() {

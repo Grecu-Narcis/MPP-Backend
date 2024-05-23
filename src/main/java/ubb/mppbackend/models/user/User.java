@@ -1,10 +1,7 @@
 package ubb.mppbackend.models.user;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import ubb.mppbackend.models.car.Car;
 import ubb.mppbackend.models.role.Role;
 

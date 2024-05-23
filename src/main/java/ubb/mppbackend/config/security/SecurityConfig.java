@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -13,15 +14,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
 
 /**
  * Configuration class for setting up security in the application.
  */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
     private final JWTAuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomUserDetailsService userDetailsService;
 
     /**
@@ -29,11 +31,15 @@ public class SecurityConfig {
      *
      * @param userDetailsService        CustomUserDetailsService implementation for user details management.
      * @param authenticationEntryPoint   JWTAuthenticationEntryPoint for handling authentication errors.
+     * @param customAccessDeniedHandler CustomAccessDeniedHandler for handling access denied errors.
      */
     @Autowired
-    public SecurityConfig(CustomUserDetailsService userDetailsService, JWTAuthenticationEntryPoint authenticationEntryPoint) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService,
+                          JWTAuthenticationEntryPoint authenticationEntryPoint,
+                          CustomAccessDeniedHandler customAccessDeniedHandler) {
         this.userDetailsService = userDetailsService;
         this.authenticationEntryPoint = authenticationEntryPoint;
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
 
     /**
@@ -47,13 +53,17 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
-            .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authenticationEntryPoint))
+            .exceptionHandling(exceptionHandling ->
+                exceptionHandling
+                    .accessDeniedHandler(this.customAccessDeniedHandler)
+                    .authenticationEntryPoint(this.authenticationEntryPoint))
             .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/login",
                     "/api/auth/register",
                     "/api/users/ping",
                     "/websocket/**").permitAll()
+//                .requestMatchers("/api/users/getAll").hasRole("ADMIN")
                 .anyRequest().authenticated());
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

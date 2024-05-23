@@ -30,7 +30,7 @@ public class UsersServiceTests {
 
     @Test
     public void testGetUserByIdSuccess() throws Exception {
-        User userToFind = new User("test", "test", "test", 23);
+        User userToFind = new User("test", "test", "test", "test");
         userToFind.setId((long) 1);
         Mockito.when(this.usersRepositoryJPA.findById(userToFind.getId())).thenReturn(java.util.Optional.of(userToFind));
 
@@ -47,7 +47,7 @@ public class UsersServiceTests {
 
     @Test
     public void testAddUser() throws Exception {
-        User userToAdd = new User("test", "user", "test.url", 20);
+        User userToAdd = new User("test", "user", "test.url", "test");
         userToAdd.setId((long) 1);
 
         Mockito.when(this.usersRepositoryJPA.save(userToAdd)).thenReturn(userToAdd);
@@ -61,7 +61,7 @@ public class UsersServiceTests {
 
     @Test
     public void testUpdateUserSuccess() {
-        User testUser = new User("test", "test", "test", 23);
+        User testUser = new User("test", "test", "test", "test");
         testUser.setId((long) 2);
 
         Mockito.when(this.usersRepositoryJPA.findById(testUser.getId())).thenReturn(Optional.of(testUser));
@@ -76,14 +76,14 @@ public class UsersServiceTests {
 
     @Test
     public void testUpdateUserThrowsException() {
-        User userToUpdate = new User("test", "user", "test.url", 20);
+        User userToUpdate = new User("test", "user", "test.url", "test");
         Mockito.when(this.usersRepositoryJPA.findById(Mockito.anyLong())).thenReturn(Optional.empty());
         Assertions.assertThrows(RepositoryException.class, () -> this.usersService.updateUser(userToUpdate));
     }
 
     @Test
     public void testDeleteUser() {
-        User userToDelete = new User("test", "test", "test", 23);
+        User userToDelete = new User("test", "test", "test", "test");
         userToDelete.setId((long) 2);
 
         Mockito.when(this.usersRepositoryJPA.findById(userToDelete.getId())).thenReturn(Optional.empty());
@@ -95,9 +95,9 @@ public class UsersServiceTests {
     @Test
     public void testGetPageAscending() {
         List<User> demoUsers = new ArrayList<>();
-        demoUsers.add(new User("test1", "test1", "test1", 21));
-        demoUsers.add(new User("test2", "test2", "test2", 22));
-        demoUsers.add(new User("test3", "test3", "test3", 23));
+        demoUsers.add(new User("test1", "test1", "test1", "test"));
+        demoUsers.add(new User("test2", "test2", "test2", "test"));
+        demoUsers.add(new User("test3", "test3", "test3", "test"));
 
         Sort sortAscending = Sort.by(Sort.Direction.ASC, "age");
         Pageable requestedPageAscending = PageRequest.of(1, 3, sortAscending);
@@ -111,9 +111,9 @@ public class UsersServiceTests {
     @Test
     public void testGetPageDescending() {
         List<User> demoUsers = new ArrayList<>();
-        demoUsers.add(new User("test1", "test1", "test1", 21));
-        demoUsers.add(new User("test2", "test2", "test2", 22));
-        demoUsers.add(new User("test3", "test3", "test3", 23));
+        demoUsers.add(new User("test1", "test1", "test1", "test"));
+        demoUsers.add(new User("test2", "test2", "test2", "test"));
+        demoUsers.add(new User("test3", "test3", "test3", "test"));
 
 
         Sort sortDescending = Sort.by(Sort.Direction.DESC, "age");

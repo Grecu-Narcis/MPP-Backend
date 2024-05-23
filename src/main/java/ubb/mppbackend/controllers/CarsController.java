@@ -93,7 +93,9 @@ public class CarsController {
 
         try {
             Car requiredCar = this.carsService.getCarById(Long.parseLong(carId));
-
+            System.out.println(requiredCar);
+            System.out.println(carId);
+            System.out.println("----------------");
             if (!authorizedUserId.equals(requiredCar.getOwner().getId().toString()))
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 

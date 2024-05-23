@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 //@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "ubb.mppbackend")
 @EnableScheduling
 @EnableAsync
 @EntityScan(basePackages = "ubb.mppbackend.models")
