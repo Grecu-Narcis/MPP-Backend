@@ -24,12 +24,18 @@ public class AuthResponseDTO {
     private String tokenType = "Bearer ";
 
     /**
+     * The role of the user associated with the access token.
+     */
+    private String userRole;
+
+    /**
      * Constructs a new AuthResponseDTO with the specified access token.
      *
      * @param accessToken The access token to be included in the response.
      */
-    public AuthResponseDTO(String accessToken, Long userId) {
+    public AuthResponseDTO(String accessToken, Long userId, String userRole) {
         this.accessToken = accessToken;
         this.userId = userId;
+        this.userRole = userRole;
     }
 }

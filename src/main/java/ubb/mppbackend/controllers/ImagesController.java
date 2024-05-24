@@ -36,19 +36,10 @@ public class ImagesController {
      * Retrieves a user's image by their userId.
      *
      * @param userId       The ID of the user whose image is being requested.
-     * @param bearerToken  The JWT bearer token used for authorization.
      * @return             ResponseEntity containing the requested image as a Base64 encoded string.
      */
     @GetMapping("/getImage/{userId}")
-    public ResponseEntity<String> getImageByUserId(@PathVariable Long userId,
-                                                   @RequestHeader("Authorization") String bearerToken) {
-        String authorizedUserId = jwtUtils.getUserIdFromBearerToken(bearerToken);
-
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
-        if (!authorizedUserId.equals(userId.toString()))
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
+    public ResponseEntity<String> getImageByUserId(@PathVariable Long userId) {
         try {
             byte[] requiredImage = this.profileImagesService.getImage(userId);
 

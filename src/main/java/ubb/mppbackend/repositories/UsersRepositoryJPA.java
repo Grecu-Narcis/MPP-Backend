@@ -1,9 +1,12 @@
 package ubb.mppbackend.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ubb.mppbackend.models.user.User;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -33,4 +36,32 @@ public interface UsersRepositoryJPA extends JpaRepository<User, Long> {
      * @return true if a user with the specified email exists in the repository; false otherwise.
      */
     Boolean existsByEmail(String email);
+
+    /**
+     * Retrieves a user by their email address and role name from the repository, if present.
+     * @param roleName The name of the role to search for.
+     * @param userEmail The email address of the user to search for.
+     * @return An Optional containing the user with the specified email and role, if found; otherwise, an empty Optional.
+     */
+    @Query("SELECT u FROM users u JOIN u.roles r WHERE r.name = :roleName AND u.email = :userEmail")
+    Optional<User> findByRoleAndEmail(String roleName, String userEmail);
+
+    /**
+     * Retrieves all users with the specified role from the repository.
+     * @param roleName The name of the role to search for.
+     * @return A list of users with the specified role.
+     */
+    @Query("SELECT u FROM users u JOIN u.roles r WHERE r.name = :roleName")
+    Page<User> findAllByRole(String roleName, Pageable pageable);
+
+    @Query(value = "SELECT u FROM users u JOIN u.roles r WHERE r.name = :roleName")
+    List<User> findAllByRole(String roleName);
+
+    /**
+     * Counts the total number of users with the specified role in the repository.
+     * @param roleName The name of the role to search for.
+     * @return The total count of users with the specified role stored in the repository.
+     */
+    @Query("SELECT count(*) FROM users u JOIN u.roles r WHERE r.name = :roleName")
+    Long countAllByRole(String roleName);
 }
