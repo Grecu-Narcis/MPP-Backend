@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.exceptions.UserValidatorException;
 import ubb.mppbackend.models.user.User;
+import ubb.mppbackend.models.user.UserMockGenerator;
 import ubb.mppbackend.models.user.UserValidator;
 import ubb.mppbackend.repositories.UsersRepositoryJPA;
 
@@ -38,6 +39,8 @@ public class UsersService {
     public UsersService(UsersRepositoryJPA usersRepository, SimpMessagingTemplate messagingTemplate) {
         this.usersRepository = usersRepository;
         this.messagingTemplate = messagingTemplate;
+
+//        UserMockGenerator.generateFakeData(10000, usersRepository);
     }
 
     /**
@@ -150,5 +153,13 @@ public class UsersService {
             UserValidator.validate(userToAdd);
             this.usersRepository.save(userToAdd);
         }
+    }
+
+    public boolean existsByEmail(String email) {
+        return this.usersRepository.existsByEmail(email);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return this.usersRepository.findByEmail(email);
     }
 }

@@ -62,6 +62,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/login",
                     "/api/auth/register",
                     "/api/users/ping",
+                    "/api/car-dealers/**",
                     "/websocket/**").permitAll()
 //                .requestMatchers("/api/users/getAll").hasRole("ADMIN")
                 .anyRequest().authenticated());

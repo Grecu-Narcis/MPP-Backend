@@ -21,11 +21,13 @@ import ubb.mppbackend.business.UsersService;
 import ubb.mppbackend.config.TestConfig;
 import ubb.mppbackend.config.security.*;
 import ubb.mppbackend.controllers.UsersController;
+import ubb.mppbackend.models.role.Role;
 import ubb.mppbackend.models.user.User;
 import ubb.mppbackend.repositories.UsersRepositoryJPA;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Set;
 
 @WebMvcTest(UsersController.class)
 @Import({TestConfig.class, SecurityConfig.class, JWTAuthenticationEntryPoint.class, CustomAccessDeniedHandler.class})
@@ -64,12 +66,19 @@ public class UsersControllerTests {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser()
     public void GetUser_WithValidCredentials_ReturnStatusOK() throws Exception {
         Long userId = (long) 1;
 
+        User mockUser = new User("test", "test", "test", "test");
+        mockUser.setId(userId);
+        Role mockRole = new Role();
+        mockRole.setName("USER");
+
+        mockUser.setRoles(Set.of(mockRole));
+
         Mockito.when(usersService.getById(userId)).
-            thenReturn(new User("test", "test", "test", "test"));
+            thenReturn(mockUser);
 
         mockMvc.perform(MockMvcRequestBuilders.get(endPoint + "/getUser/" + userId)
                 .header("Authorization", "Bearer " + this.jwtToken))

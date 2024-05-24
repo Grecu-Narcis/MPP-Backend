@@ -61,20 +61,13 @@ public class CarsController {
      * @param ownerId     The ID of the owner whose cars are to be retrieved.
      * @param page        The page number for pagination (starting from 0).
      * @param pageSize    The maximum number of cars per page.
-     * @param bearerToken The authorization token (Bearer token) provided in the request header.
      * @return ResponseEntity containing a paginated list of cars if authorized,
      *         otherwise returns HTTP status UNAUTHORIZED.
      */
     @GetMapping("/getPageByOwnerId")
     public ResponseEntity<List<Car>> getPageByOwnerId(@RequestParam String ownerId,
                                                       @RequestParam String page,
-                                                      @RequestParam String pageSize,
-                                                      @RequestHeader("Authorization") String bearerToken) {
-        String authorizedUserId = jwtUtils.getUserIdFromBearerToken(bearerToken);
-
-        if (!authorizedUserId.equals(ownerId))
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
+                                                      @RequestParam String pageSize) {
         List<Car> cars = this.carsService.getPageOfCarsByOwnerId(Long.parseLong(ownerId), Integer.parseInt(page), Integer.parseInt(pageSize));
         return ResponseEntity.ok().body(cars);
     }
@@ -83,21 +76,13 @@ public class CarsController {
      * Retrieves a specific car by its ID.
      *
      * @param carId       The ID of the car to retrieve.
-     * @param bearerToken The authorization token (Bearer token) provided in the request header.
      * @return ResponseEntity containing the requested car if authorized,
      *         otherwise returns HTTP status UNAUTHORIZED or NOT_FOUND if the car does not exist.
      */
     @GetMapping("/getCar/{carId}")
-    public ResponseEntity<Car> getCarById(@PathVariable String carId, @RequestHeader("Authorization") String bearerToken) {
-        String authorizedUserId = jwtUtils.getUserIdFromBearerToken(bearerToken);
-
+    public ResponseEntity<Car> getCarById(@PathVariable String carId) {
         try {
             Car requiredCar = this.carsService.getCarById(Long.parseLong(carId));
-            System.out.println(requiredCar);
-            System.out.println(carId);
-            System.out.println("----------------");
-            if (!authorizedUserId.equals(requiredCar.getOwner().getId().toString()))
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
             return ResponseEntity.ok().body(requiredCar);
         }
@@ -111,18 +96,11 @@ public class CarsController {
      * Retrieves the count of cars owned by a specified owner ID.
      *
      * @param ownerId     The ID of the owner whose cars are to be counted.
-     * @param bearerToken The authorization token (Bearer token) provided in the request header.
      * @return ResponseEntity containing the count of cars if authorized,
      *         otherwise returns HTTP status UNAUTHORIZED.
      */
     @GetMapping("/getCarsCount/{ownerId}")
-    public ResponseEntity<Integer> getCarsCountByOwnerId(@PathVariable String ownerId,
-                                                         @RequestHeader("Authorization") String bearerToken) {
-        String authorizedUserId = jwtUtils.getUserIdFromBearerToken(bearerToken);
-
-        if (!authorizedUserId.equals(ownerId))
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
+    public ResponseEntity<Integer> getCarsCountByOwnerId(@PathVariable String ownerId) {
         int count = this.carsService.countCarsByOwnerId(Long.parseLong(ownerId));
         return ResponseEntity.ok().body(count);
     }

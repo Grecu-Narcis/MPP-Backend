@@ -2,10 +2,12 @@ package ubb.mppbackend.models.user;
 
 import com.github.javafaker.Faker;
 import com.github.javafaker.Name;
+import ubb.mppbackend.models.role.Role;
 import ubb.mppbackend.repositories.UsersRepositoryJPA;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Utility class to generate and save fake User data into a UsersRepository using JPA.
@@ -21,10 +23,20 @@ public class UserMockGenerator {
      */
     public static List<User> generateFakeData(int numberOfUsers, UsersRepositoryJPA usersRepository) {
         List<User> fakeUsers = new ArrayList<>();
+        Role mockRole = new Role();
+        mockRole.setId(2L);
+        mockRole.setName("MANAGER");
 
         for (int i = 0; i < numberOfUsers; i++) {
             User fakeUser = generateFakeUser();
+            fakeUser.setRoles(Set.of(mockRole));
             fakeUsers.add(fakeUser);
+
+            if ((i + 1) % 1000 == 0)
+            {
+                usersRepository.saveAll(fakeUsers);
+                fakeUsers.clear();
+            }
         }
 
         usersRepository.saveAll(fakeUsers);

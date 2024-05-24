@@ -165,11 +165,9 @@ public class UsersController {
         try {
             this.imagesService.removeUserProfileImage(Long.parseLong(userId));
             this.usersService.deleteUser(Long.parseLong(userId));
-            System.out.println("--------------------------user removed-------------------------------------------");
         }
 
         catch (IOException e) {
-            System.out.println("======================================");
             System.out.println(e.getMessage());
         }
     }

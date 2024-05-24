@@ -17,6 +17,7 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private String email;
+    private String userRole;
     /**
      * Constructs a UserDTO object based on the provided User object.
      *
@@ -27,5 +28,6 @@ public class UserDTO {
         this.firstName = userToConvert.getFirstName();
         this.lastName = userToConvert.getLastName();
         this.email = userToConvert.getEmail();
+        this.userRole = userToConvert.getRoles().stream().findFirst().get().getName();
     }
 }
