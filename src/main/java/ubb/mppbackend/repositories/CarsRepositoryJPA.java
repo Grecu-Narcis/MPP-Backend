@@ -37,4 +37,11 @@ public interface CarsRepositoryJPA extends JpaRepository<Car, Long> {
      */
     @Query("SELECT count(*) FROM cars c where c.owner.id = ?1")
     int countCarsByOwnerId(Long ownerId);
+
+    /**
+     * Retrieves the total number of cars in the database.
+     * @return total number of cars in the database.
+     */
+    @Query("SELECT count(c) FROM cars c")
+    Long getTotalCarCount();
 }

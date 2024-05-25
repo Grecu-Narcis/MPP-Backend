@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.exceptions.UserValidatorException;
@@ -161,5 +162,18 @@ public class UsersService {
 
     public Optional<User> findByEmail(String email) {
         return this.usersRepository.findByEmail(email);
+    }
+
+    /**
+     * Checks if the provided authentication object is an admin.
+     * @param authentication The authentication object to check.
+     * @return True if the authentication object is an admin, false otherwise.
+     */
+    public static boolean isAdmin(Authentication authentication) {
+        if (authentication == null) return false;
+
+        return authentication.getAuthorities()
+            .stream()
+            .anyMatch(authority -> authority.getAuthority().contains("ADMIN"));
     }
 }
