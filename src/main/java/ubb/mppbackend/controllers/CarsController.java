@@ -169,14 +169,11 @@ public class CarsController {
                                             @RequestHeader("Authorization") String bearerToken,
                                             Authentication authentication) {
         String authorizedUserId = jwtUtils.getUserIdFromBearerToken(bearerToken);
-
         try {
             User owner = this.carsService.getCarById(carToAdd.getId()).getOwner();
-
             if (!authorizedUserId.equals(owner.getId().toString()) &&
                 !UsersService.isAdmin(authentication))
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
             carToAdd.setOwner(owner);
             this.carsService.updateCar(carToAdd);
             return ResponseEntity.ok().body("Car added successfully!");
