@@ -59,7 +59,8 @@ public class CarsControllerTests {
         UserDetails mockUserDetails = org.springframework.security.core.userdetails.User
             .withUsername("narcis@email.com")
             .password("secret")
-            .roles("USER")
+            .roles("MANAGER")
+            .authorities("MANAGER")
             .build();
 
         Mockito.when(customUserDetailsService.loadUserByUsername("narcis@email.com")).thenReturn(mockUserDetails);
@@ -112,8 +113,9 @@ public class CarsControllerTests {
     }
 
     @Test
+    @WithMockUser(username = "narcis@email.com",authorities = "MANAGER")
     public void testUpdateCarNotFound() throws Exception {
-        User testUser = new User("test", "test", "test", "test");
+        User testUser = new User("narcis@email.com", "test", "test", "test");
         Car testCar = new Car("mazda", "miata", 2002, 2000, "test.jpg", 24323, "diesel");
         testCar.setOwner(testUser);
         testCar.setId(1L);
