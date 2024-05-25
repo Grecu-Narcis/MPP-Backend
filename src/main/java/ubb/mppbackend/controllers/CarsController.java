@@ -3,8 +3,11 @@ package ubb.mppbackend.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ubb.mppbackend.business.CarsService;
+import ubb.mppbackend.business.UsersService;
 import ubb.mppbackend.config.security.JWTUtils;
 import ubb.mppbackend.models.car.Car;
 import ubb.mppbackend.models.user.User;
@@ -38,17 +41,11 @@ public class CarsController {
      * Retrieves all cars owned by a specified owner ID.
      *
      * @param ownerId     The ID of the owner whose cars are to be retrieved.
-     * @param bearerToken The authorization token (Bearer token) provided in the request header.
      * @return ResponseEntity containing a list of cars belonging to the specified owner if authorized,
      *         otherwise returns HTTP status UNAUTHORIZED.
      */
     @GetMapping("/getAllByOwnerId/{ownerId}")
-    public ResponseEntity<List<Car>> getCarsByOwnerId(@PathVariable String ownerId,
-                                                      @RequestHeader("Authorization") String bearerToken) {
-        String authorizedUserId = jwtUtils.getUserIdFromBearerToken(bearerToken);
-
-        if (!authorizedUserId.equals(ownerId))
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<List<Car>> getCarsByOwnerId(@PathVariable String ownerId) {
 
         List<Car> cars = this.carsService.getAllCarsByOwnerId(Long.parseLong(ownerId));
         System.out.println(cars);
@@ -70,6 +67,58 @@ public class CarsController {
                                                       @RequestParam String pageSize) {
         List<Car> cars = this.carsService.getPageOfCarsByOwnerId(Long.parseLong(ownerId), Integer.parseInt(page), Integer.parseInt(pageSize));
         return ResponseEntity.ok().body(cars);
+    }
+
+    /**
+     * Retrieves a paginated list of cars.
+     * @param pageNumber The page number (0-based) of the results to retrieve.
+     * @param pageSize The number of cars per page.
+     * @return ResponseEntity containing a paginated list of cars if authorized,
+     *        otherwise returns HTTP status BAD_REQUEST.
+     */
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/getPage")
+    public ResponseEntity<List<Car>> getPage(@RequestParam(name = "page") Integer pageNumber,
+                                             @RequestParam(name = "size") Integer pageSize) {
+        try {
+            System.out.println("hello");
+            return ResponseEntity.ok().body(this.carsService.getPage(pageNumber, pageSize));
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    /**
+     * Retrieves all cars in the database.
+     * @return ResponseEntity containing a list of all cars if authorized,
+     *       otherwise returns HTTP status UNAUTHORIZED or BAD_REQUEST.
+     */
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/getAll")
+    public ResponseEntity<List<Car>> getAll() {
+        try {
+            return ResponseEntity.ok().body(this.carsService.getAll());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    /**
+     * Retrieves the total number of cars in the database.
+     * @return ResponseEntity containing the total number of cars if authorized,
+     *       otherwise returns HTTP status UNAUTHORIZED or INTERNAL_SERVER_ERROR.
+     */
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/getTotalCarCount")
+    public ResponseEntity<Long> getTotalCarCount() {
+        try {
+            return ResponseEntity.ok().body(this.carsService.getTotalCarCount());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     /**
@@ -114,14 +163,18 @@ public class CarsController {
      *         with success message if authorized and completed,
      *         otherwise returns HTTP status UNAUTHORIZED or BAD_REQUEST.
      */
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('MANAGER')")
     @PutMapping("/updateCar")
-    public ResponseEntity<String> updateCar(@RequestBody Car carToAdd, @RequestHeader("Authorization") String bearerToken) {
+    public ResponseEntity<String> updateCar(@RequestBody Car carToAdd,
+                                            @RequestHeader("Authorization") String bearerToken,
+                                            Authentication authentication) {
         String authorizedUserId = jwtUtils.getUserIdFromBearerToken(bearerToken);
 
         try {
             User owner = this.carsService.getCarById(carToAdd.getId()).getOwner();
 
-            if (!authorizedUserId.equals(owner.getId().toString()))
+            if (!authorizedUserId.equals(owner.getId().toString()) &&
+                !UsersService.isAdmin(authentication))
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
             carToAdd.setOwner(owner);
@@ -131,6 +184,39 @@ public class CarsController {
 
         catch (Exception e) {
             return ResponseEntity.badRequest().body("Invalid car data!");
+        }
+    }
+
+    /**
+     * Deletes a specified car by its ID.
+     * @param carId The ID of the car to delete.
+     * @param bearerToken The authorization token (Bearer token) provided in the request header.
+     * @param authentication The authentication object containing user details.
+     * @return ResponseEntity indicating the status of the delete operation,
+     *        with success message if authorized and completed,
+     *        otherwise returns HTTP status UNAUTHORIZED or BAD_REQUEST.
+     */
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('MANAGER')")
+    @DeleteMapping("/deleteCar/{carId}")
+    public ResponseEntity<String> deleteCar(@PathVariable String carId,
+                                            @RequestHeader("Authorization") String bearerToken,
+                                            Authentication authentication) {
+        String authorizedUserId = jwtUtils.getUserIdFromBearerToken(bearerToken);
+
+        try {
+            Car car = this.carsService.getCarById(Long.parseLong(carId));
+            User owner = car.getOwner();
+
+            if (!authorizedUserId.equals(owner.getId().toString()) &&
+                !UsersService.isAdmin(authentication))
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+            this.carsService.deleteCar(Long.parseLong(carId));
+            return ResponseEntity.ok().body("Car deleted successfully!");
+        }
+
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body("Invalid car ID!");
         }
     }
 }

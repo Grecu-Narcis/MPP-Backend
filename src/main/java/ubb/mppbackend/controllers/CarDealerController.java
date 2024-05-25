@@ -36,6 +36,28 @@ public class CarDealerController {
         }
     }
 
+    @GetMapping("/getPageByName")
+    public ResponseEntity<List<UserDTO>> getPageFilteredByName(@RequestParam(name = "page") Integer requiredPage,
+                                                               @RequestParam(name = "size") Integer pageSize,
+                                                               @RequestParam(name = "name") String userName) {
+        try {
+            return ResponseEntity.ok().body(this.carDealerService.getPageFilteredByName(requiredPage, pageSize, userName));
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @GetMapping("/getCountByName")
+    public ResponseEntity<Long> getCountByName(@RequestParam(name = "name") String userName) {
+        try {
+            return ResponseEntity.ok().body(this.carDealerService.getCountByName(userName));
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
     @GetMapping("/getDealer/{userId}")
     public ResponseEntity<UserDTO> getDealer(@PathVariable String userId) {
         try {

@@ -54,8 +54,24 @@ public interface UsersRepositoryJPA extends JpaRepository<User, Long> {
     @Query("SELECT u FROM users u JOIN u.roles r WHERE r.name = :roleName")
     Page<User> findAllByRole(String roleName, Pageable pageable);
 
+    /**
+     * Retrieves all users with the specified role from the repository.
+     * @param roleName The name of the role to search for.
+     * @return A list of users with the specified role.
+     */
     @Query(value = "SELECT u FROM users u JOIN u.roles r WHERE r.name = :roleName")
     List<User> findAllByRole(String roleName);
+
+    /**
+     * Retrieves all users with the specified role and name from the repository.
+     * @param roleName The name of the role to search for.
+     * @param userName The name of the user to search for.
+     * @param pageable The pagination information for the query.
+     * @return A list of users with the specified role and name.
+     */
+    @Query(value = "SELECT u FROM users u JOIN u.roles r WHERE r.name = :roleName AND " +
+        "LOWER(CONCAT(u.firstName, ' ', u.lastName)) LIKE CONCAT('%', LOWER(:userName), '%')")
+    Page<User> findAllByRoleAndUserName(String roleName, String userName, Pageable pageable);
 
     /**
      * Counts the total number of users with the specified role in the repository.
@@ -64,4 +80,8 @@ public interface UsersRepositoryJPA extends JpaRepository<User, Long> {
      */
     @Query("SELECT count(*) FROM users u JOIN u.roles r WHERE r.name = :roleName")
     Long countAllByRole(String roleName);
+
+    @Query(value = "SELECT count(*) FROM users u JOIN u.roles r WHERE r.name = :roleName AND " +
+        "LOWER(CONCAT(u.firstName, ' ', u.lastName)) LIKE CONCAT('%', LOWER(:userName), '%')")
+    Long countAllByRoleAndUserName(String roleName, String userName);
 }

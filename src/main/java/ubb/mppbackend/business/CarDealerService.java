@@ -48,4 +48,17 @@ public class CarDealerService {
     public Long getCount() {
         return this.usersRepositoryJPA.countAllByRole("MANAGER");
     }
+
+    public List<UserDTO> getPageFilteredByName(Integer requiredPage, Integer pageSize, String userName) {
+        Pageable pageableRequest = PageRequest.of(requiredPage, pageSize);
+
+        return this.usersRepositoryJPA.findAllByRoleAndUserName("MANAGER", userName, pageableRequest)
+            .stream()
+            .map(UserDTO::new)
+            .collect(Collectors.toList());
+    }
+
+    public Long getCountByName(String userName) {
+        return this.usersRepositoryJPA.countAllByRoleAndUserName("MANAGER", userName);
+    }
 }

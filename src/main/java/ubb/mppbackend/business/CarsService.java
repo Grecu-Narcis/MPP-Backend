@@ -3,15 +3,15 @@ package ubb.mppbackend.business;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.models.car.Car;
-import ubb.mppbackend.models.car.CarMockGenerator;
 import ubb.mppbackend.repositories.CarsRepositoryJPA;
-import ubb.mppbackend.repositories.UsersRepositoryJPA;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Service responsible for cars entities
@@ -81,5 +81,37 @@ public class CarsService {
         Pageable requestedPage = PageRequest.of(page, size);
 
         return carsRepository.findAllByOwnerId(ownerId, requestedPage).getContent();
+    }
+
+    /**
+     * Removes a car from the database.
+     * @param carId The unique identifier of the car to remove.
+     */
+    public void deleteCar(Long carId) {
+        this.carsRepository.deleteById(carId);
+    }
+
+    public List<Car> getPage(Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        return this.carsRepository.findAll(pageable)
+            .stream()
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves the total number of cars in the database.
+     * @return total number of cars in the database.
+     */
+    public Long getTotalCarCount() {
+        return this.carsRepository.getTotalCarCount();
+    }
+
+    /**
+     * Retrieves all cars from the database.
+     * @return a list of all cars in the database.
+     */
+    public List<Car> getAll() {
+        return this.carsRepository.findAll();
     }
 }
