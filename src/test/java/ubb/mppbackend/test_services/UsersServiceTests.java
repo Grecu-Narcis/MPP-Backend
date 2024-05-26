@@ -99,7 +99,7 @@ public class UsersServiceTests {
         demoUsers.add(new User("test2", "test2", "test2", "test"));
         demoUsers.add(new User("test3", "test3", "test3", "test"));
 
-        Sort sortAscending = Sort.by(Sort.Direction.ASC, "age");
+        Sort sortAscending = Sort.by(Sort.Direction.ASC, "id");
         Pageable requestedPageAscending = PageRequest.of(1, 3, sortAscending);
         Page<User> returnPageAscending = new PageImpl<>(demoUsers, requestedPageAscending, demoUsers.size());
 
@@ -116,7 +116,7 @@ public class UsersServiceTests {
         demoUsers.add(new User("test3", "test3", "test3", "test"));
 
 
-        Sort sortDescending = Sort.by(Sort.Direction.DESC, "age");
+        Sort sortDescending = Sort.by(Sort.Direction.DESC, "id");
         Pageable requestedPageDescending = PageRequest.of(1, 3, sortDescending);
         Page<User> returnPageDescending = new PageImpl<>(demoUsers, requestedPageDescending, demoUsers.size());
 

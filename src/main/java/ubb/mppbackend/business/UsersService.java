@@ -119,7 +119,7 @@ public class UsersService {
      * @return A list of users for the specified page, sorted by age.
      */
     public List<User> getPage(int requiredPage, boolean isAscending, int pageSize) {
-        Sort sort = Sort.by(isAscending ? Sort.Direction.ASC : Sort.Direction.DESC, "age");
+        Sort sort = Sort.by(isAscending ? Sort.Direction.ASC : Sort.Direction.DESC, "id");
         Pageable requestedPage = PageRequest.of(requiredPage, pageSize, sort);
 
         return this.usersRepository.findAll(requestedPage).getContent();

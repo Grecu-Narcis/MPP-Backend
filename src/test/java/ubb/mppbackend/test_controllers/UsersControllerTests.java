@@ -17,12 +17,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ubb.mppbackend.business.ImagesService;
+import ubb.mppbackend.business.RoleService;
 import ubb.mppbackend.business.UsersService;
 import ubb.mppbackend.config.TestConfig;
 import ubb.mppbackend.config.security.*;
 import ubb.mppbackend.controllers.UsersController;
 import ubb.mppbackend.models.role.Role;
 import ubb.mppbackend.models.user.User;
+import ubb.mppbackend.repositories.RoleRepositoryJPA;
 import ubb.mppbackend.repositories.UsersRepositoryJPA;
 
 import java.util.ArrayList;
@@ -30,7 +32,8 @@ import java.util.Optional;
 import java.util.Set;
 
 @WebMvcTest(UsersController.class)
-@Import({TestConfig.class, SecurityConfig.class, JWTAuthenticationEntryPoint.class, CustomAccessDeniedHandler.class})
+@Import({TestConfig.class, SecurityConfig.class, JWTAuthenticationEntryPoint.class, CustomAccessDeniedHandler.class,
+    RoleService.class})
 @AutoConfigureMockMvc
 public class UsersControllerTests {
     private final String endPoint = "/api/users";
@@ -39,6 +42,7 @@ public class UsersControllerTests {
     @MockBean private UsersService usersService;
     @MockBean private ImagesService imagesService;
     @MockBean private UsersRepositoryJPA usersRepositoryJPA;
+    @MockBean private RoleRepositoryJPA roleRepositoryJPA;
     @MockBean private CustomUserDetailsService customUserDetailsService;
     @Autowired private JWTUtils jwtUtils;
     private String jwtToken;
