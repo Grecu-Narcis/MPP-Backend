@@ -4,16 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ubb.mppbackend.business.ImagesService;
+import ubb.mppbackend.business.RoleService;
 import ubb.mppbackend.business.UsersService;
 import ubb.mppbackend.config.security.JWTUtils;
+import ubb.mppbackend.dto.UserRegisterDTO;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.exceptions.UserValidatorException;
 import ubb.mppbackend.models.user.User;
 import ubb.mppbackend.dto.UserDTO;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +32,8 @@ import java.util.List;
 public class UsersController {
     private final UsersService usersService;
     private final ImagesService imagesService;
+    private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
 
     /**
@@ -36,9 +42,13 @@ public class UsersController {
      * @param imagesService The service handling image-related operations.
      */
     @Autowired
-    public UsersController(UsersService usersService, ImagesService imagesService, JWTUtils jwtUtils) {
+    public UsersController(UsersService usersService, ImagesService imagesService,
+                           RoleService roleService, PasswordEncoder passwordEncoder,
+                           JWTUtils jwtUtils) {
         this.usersService = usersService;
         this.imagesService = imagesService;
+        this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
     }
 
@@ -99,12 +109,19 @@ public class UsersController {
 
     /**
      * Add a new user.
-     * @param userToAdd The user object to add.
+     * @param userRegisterDTO The user object to add.
      * @return ResponseEntity indicating success or failure of the operation.
      */
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/addUser")
-    public ResponseEntity<String> addUser(@RequestBody User userToAdd) {
+    public ResponseEntity<String> addUser(@RequestBody UserRegisterDTO userRegisterDTO) {
         try {
+            if (this.usersService.existsByEmail(userRegisterDTO.getEmail()))
+                return ResponseEntity.badRequest().body("An user with this email already exists!");
+
+            User userToAdd = new User(userRegisterDTO.getFirstName(), userRegisterDTO.getLastName(),
+                userRegisterDTO.getEmail(), this.passwordEncoder.encode(userRegisterDTO.getPassword()));
+
             this.usersService.addUser(userToAdd);
             return ResponseEntity.ok().body(userToAdd.getId().toString());
         }
@@ -120,14 +137,31 @@ public class UsersController {
 
     /**
      * Add multiple users.
-     * @param usersToAdd List of users to add.
+     * @param usersToAddRequest List of users to add.
      * @return ResponseEntity indicating success or failure of the operation.
      */
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/addUsers")
-    public ResponseEntity<String> addUsers(@RequestBody List<User> usersToAdd) {
+    public ResponseEntity<String> addUsers(@RequestBody List<UserRegisterDTO> usersToAddRequest) {
         try {
+            StringBuilder errors = new StringBuilder();
+            List<User> usersToAdd = new ArrayList<>();
+            for (UserRegisterDTO userRegisterDTO : usersToAddRequest) {
+                if (this.usersService.existsByEmail(userRegisterDTO.getEmail())) {
+                    errors.append("An user with this email already exists!");
+                    continue;
+                }
+
+                User userToAdd = new User(userRegisterDTO.getFirstName(), userRegisterDTO.getLastName(),
+                    userRegisterDTO.getEmail(), this.passwordEncoder.encode(userRegisterDTO.getPassword()));
+
+                usersToAdd.add(userToAdd);
+            }
+
             this.usersService.addUsers(usersToAdd);
-            return ResponseEntity.ok().body("Users added successfully!");
+
+            return errors.isEmpty() ? ResponseEntity.ok().body("Users added successfully!") :
+                ResponseEntity.badRequest().body(errors.toString());
         }
 
         catch (UserValidatorException e) {
