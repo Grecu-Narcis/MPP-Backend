@@ -46,8 +46,6 @@ public class ImagesController {
             String encodedImage = Base64.getEncoder().encodeToString(requiredImage);
             return ResponseEntity.ok().body(encodedImage);
         } catch (Exception e) {
-            System.out.println("@@@@@@@@@@@@@@@@@");
-            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -73,7 +71,6 @@ public class ImagesController {
             this.profileImagesService.saveImageToStorage(userId, imageToSave);
             return ResponseEntity.ok().body("File saved successfully!");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

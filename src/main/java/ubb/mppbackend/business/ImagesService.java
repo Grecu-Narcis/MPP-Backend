@@ -81,8 +81,7 @@ public class ImagesService {
      */
     public void removeUserProfileImage(Long userId) throws IOException {
         String imageToRemovePath = this.getImageUrl(userId);
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        System.out.println(imageToRemovePath);
+
         if (imageToRemovePath == null)
             return;
 
