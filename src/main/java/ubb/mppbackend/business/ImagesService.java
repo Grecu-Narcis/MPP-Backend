@@ -39,19 +39,6 @@ public class ImagesService {
     }
 
     /**
-     * Retrieves the URL of the profile image associated with the specified user ID.
-     *
-     * @param userId The ID of the user whose profile image URL is to be retrieved.
-     * @return The URL of the user's profile image, or null if no image is found.
-     */
-    public String getImageUrl(Long userId) {
-        Optional<ProfileImage> requiredImage = profileImagesRepository.findByUserId(userId);
-
-        return requiredImage.map(profileImage -> uploadDirectory + "/" + profileImage.getImageUrl()).orElse(null);
-
-    }
-
-    /**
      * Saves a profile image to the storage directory and associates it with the specified user ID.
      *
      * @param userId      The ID of the user to associate the image with.
@@ -65,7 +52,10 @@ public class ImagesService {
             throw new Exception("User not found");
         }
 
+        Optional<ProfileImage> requiredImage = profileImagesRepository.findByUserId(requiredUser.get().getId());
+
         this.removeUserProfileImage(requiredUser.get().getId());
+        requiredImage.ifPresent(profileImage -> this.profileImagesRepository.delete(profileImage));
 
         String imageUrl = UUID.randomUUID() + imageToSave.getOriginalFilename();
         Path uploadPath = Path.of(uploadDirectory, imageUrl);
@@ -82,12 +72,17 @@ public class ImagesService {
      * @throws IOException If there is an error deleting the image file.
      */
     public void removeUserProfileImage(Long userId) throws IOException {
-        String imageToRemovePath = this.getImageUrl(userId);
-
-        if (imageToRemovePath == null)
+        Optional<ProfileImage> requiredImage = profileImagesRepository.findByUserId(userId);
+        if (requiredImage.isEmpty())
             return;
 
+        String imageToRemovePath = uploadDirectory + "/" + requiredImage.get().getImageUrl();
+
         Path pathToRemove = Path.of(imageToRemovePath);
+
+        if (!Files.exists(pathToRemove))
+            return;
+
         Files.delete(pathToRemove);
     }
 
