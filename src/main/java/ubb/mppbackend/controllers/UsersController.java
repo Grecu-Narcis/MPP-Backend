@@ -7,7 +7,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ubb.mppbackend.business.ImagesService;
-import ubb.mppbackend.business.RoleService;
 import ubb.mppbackend.business.UsersService;
 import ubb.mppbackend.config.security.JWTUtils;
 import ubb.mppbackend.dto.UserRegisterDTO;
@@ -32,7 +31,6 @@ import java.util.List;
 public class UsersController {
     private final UsersService usersService;
     private final ImagesService imagesService;
-    private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
 
@@ -43,11 +41,9 @@ public class UsersController {
      */
     @Autowired
     public UsersController(UsersService usersService, ImagesService imagesService,
-                           RoleService roleService, PasswordEncoder passwordEncoder,
-                           JWTUtils jwtUtils) {
+                           PasswordEncoder passwordEncoder, JWTUtils jwtUtils) {
         this.usersService = usersService;
         this.imagesService = imagesService;
-        this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
     }

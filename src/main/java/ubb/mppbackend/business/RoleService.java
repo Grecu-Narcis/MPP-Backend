@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Service
 public class RoleService {
-    private RoleRepositoryJPA roleRepositoryJPA;
+    private final RoleRepositoryJPA roleRepositoryJPA;
 
     @Autowired
     public RoleService(RoleRepositoryJPA roleRepositoryJPA) {

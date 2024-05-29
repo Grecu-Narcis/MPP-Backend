@@ -22,8 +22,6 @@ import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.exceptions.UserValidatorException;
 import ubb.mppbackend.models.role.Role;
 import ubb.mppbackend.models.user.User;
-import ubb.mppbackend.repositories.RoleRepositoryJPA;
-import ubb.mppbackend.repositories.UsersRepositoryJPA;
 
 import java.util.Optional;
 import java.util.Set;
@@ -108,7 +106,6 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody UserLoginDTO loginRequest) {
         try {
-            System.out.println("hello");
             Authentication authentication = this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );

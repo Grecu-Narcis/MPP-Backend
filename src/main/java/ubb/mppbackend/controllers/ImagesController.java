@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ubb.mppbackend.business.ImagesService;
 import ubb.mppbackend.config.security.JWTUtils;
 
+import java.nio.file.FileAlreadyExistsException;
 import java.util.Base64;
 
 /**
@@ -70,7 +71,8 @@ public class ImagesController {
         try {
             this.profileImagesService.saveImageToStorage(userId, imageToSave);
             return ResponseEntity.ok().body("File saved successfully!");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

@@ -24,7 +24,7 @@ import java.util.UUID;
 public class ImagesService {
     ProfileImagesRepositoryJPA profileImagesRepository;
     UsersRepositoryJPA usersRepository;
-    private final String uploadDirectory = "src/main/resources/profile-images";
+    private final String uploadDirectory = "./src/main/resources/profile-images";
 
     /**
      * Constructs a new ImagesService instance with the specified dependencies.
@@ -52,13 +52,11 @@ public class ImagesService {
             throw new Exception("User not found");
         }
 
-        Optional<ProfileImage> requiredImage = profileImagesRepository.findByUserId(requiredUser.get().getId());
-
         this.removeUserProfileImage(requiredUser.get().getId());
-        requiredImage.ifPresent(profileImage -> this.profileImagesRepository.delete(profileImage));
 
         String imageUrl = UUID.randomUUID() + imageToSave.getOriginalFilename();
         Path uploadPath = Path.of(uploadDirectory, imageUrl);
+        System.out.println(uploadPath);
         Files.copy(imageToSave.getInputStream(), uploadPath, StandardCopyOption.REPLACE_EXISTING);
 
         ProfileImage profileImage = new ProfileImage(imageUrl, requiredUser.get());
@@ -76,12 +74,15 @@ public class ImagesService {
         if (requiredImage.isEmpty())
             return;
 
+        requiredImage.ifPresent(profileImage -> this.profileImagesRepository.delete(profileImage));
         String imageToRemovePath = uploadDirectory + "/" + requiredImage.get().getImageUrl();
 
         Path pathToRemove = Path.of(imageToRemovePath);
 
-        if (!Files.exists(pathToRemove))
+        if (!Files.exists(pathToRemove)) {
+            System.out.println("not exists");
             return;
+        }
 
         Files.delete(pathToRemove);
     }

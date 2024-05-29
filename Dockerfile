@@ -11,5 +11,5 @@ COPY ./target/MPP-Backend-0.0.1-SNAPSHOT.jar ./target/MPP-Backend-0.0.1-SNAPSHOT
 COPY ./src/main/resources/profile-images ./src/main/resources/profile-images
 
 EXPOSE 8443
-USER 10014
+USER root
 CMD ["java","-jar","./target/MPP-Backend-0.0.1-SNAPSHOT.jar"]
