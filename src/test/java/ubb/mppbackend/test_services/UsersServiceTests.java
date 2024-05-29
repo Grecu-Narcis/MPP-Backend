@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import ubb.mppbackend.business.UsersService;
+import ubb.mppbackend.dto.UserDTO;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.models.user.User;
 import ubb.mppbackend.repositories.UsersRepositoryJPA;
@@ -67,8 +68,10 @@ public class UsersServiceTests {
         Mockito.when(this.usersRepositoryJPA.findById(testUser.getId())).thenReturn(Optional.of(testUser));
         Mockito.when(this.usersRepositoryJPA.save(testUser)).thenReturn(testUser);
 
+        UserDTO userDTO = new UserDTO(2L, "test", "test", "test", "User");
+
         try {
-            this.usersService.updateUser(testUser);
+            this.usersService.updateUser(userDTO);
         }
 
         catch (Exception ignored) {}
@@ -77,8 +80,10 @@ public class UsersServiceTests {
     @Test
     public void testUpdateUserThrowsException() {
         User userToUpdate = new User("test", "user", "test.url", "test");
+        UserDTO userDTO = new UserDTO(2L, "test", "test", "test", "User");
+
         Mockito.when(this.usersRepositoryJPA.findById(Mockito.anyLong())).thenReturn(Optional.empty());
-        Assertions.assertThrows(RepositoryException.class, () -> this.usersService.updateUser(userToUpdate));
+        Assertions.assertThrows(RepositoryException.class, () -> this.usersService.updateUser(userDTO));
     }
 
     @Test

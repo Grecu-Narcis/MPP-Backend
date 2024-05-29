@@ -23,22 +23,26 @@ public class UserMockGenerator {
      */
     public static List<User> generateFakeData(int numberOfUsers, UsersRepositoryJPA usersRepository) {
         List<User> fakeUsers = new ArrayList<>();
-        Role mockRole = new Role();
-        mockRole.setId(2L);
-        mockRole.setName("MANAGER");
 
+        Role mockUserRole = new Role();
+        mockUserRole.setId(2L);
+        mockUserRole.setName("MANAGER");
+
+        System.out.println("start");
         for (int i = 0; i < numberOfUsers; i++) {
             User fakeUser = generateFakeUser();
-            fakeUser.setRoles(Set.of(mockRole));
+            fakeUser.setRoles(Set.of(mockUserRole));
             fakeUsers.add(fakeUser);
 
             if ((i + 1) % 1000 == 0)
             {
+                System.out.println("saving batch of 1000");
                 usersRepository.saveAll(fakeUsers);
                 fakeUsers.clear();
             }
         }
 
+        System.out.println("end");
         usersRepository.saveAll(fakeUsers);
         return fakeUsers;
     }

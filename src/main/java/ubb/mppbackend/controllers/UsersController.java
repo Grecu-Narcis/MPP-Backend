@@ -175,7 +175,7 @@ public class UsersController {
      * @return ResponseEntity indicating success or failure of the operation.
      */
     @PutMapping("/updateUser")
-    public ResponseEntity<String> updateUser(@RequestBody User userToUpdate) {
+    public ResponseEntity<String> updateUser(@RequestBody UserDTO userToUpdate) {
         try {
             this.usersService.updateUser(userToUpdate);
             return ResponseEntity.ok().body("User updated successfully!");

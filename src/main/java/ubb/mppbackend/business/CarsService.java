@@ -3,11 +3,13 @@ package ubb.mppbackend.business;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.models.car.Car;
+import ubb.mppbackend.models.car.CarMockGenerator;
+import ubb.mppbackend.models.user.User;
 import ubb.mppbackend.repositories.CarsRepositoryJPA;
+import ubb.mppbackend.repositories.UsersRepositoryJPA;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +25,9 @@ public class CarsService {
     @Autowired
     public CarsService(CarsRepositoryJPA carsRepository) {
         this.carsRepository = carsRepository;
+
+//        List<User> allManagers = usersRepositoryJPA.findAllByRole("MANAGER");
+//        CarMockGenerator.addFakeCars(100000, allManagers, this.carsRepository);
     }
 
     /**

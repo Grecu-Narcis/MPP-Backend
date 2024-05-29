@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import ubb.mppbackend.dto.UserDTO;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.exceptions.UserValidatorException;
 import ubb.mppbackend.models.user.User;
@@ -41,7 +42,7 @@ public class UsersService {
         this.usersRepository = usersRepository;
         this.messagingTemplate = messagingTemplate;
 
-//        UserMockGenerator.generateFakeData(10000, usersRepository);
+//        UserMockGenerator.generateFakeData(1000, usersRepository);
     }
 
     /**
@@ -88,17 +89,23 @@ public class UsersService {
     /**
      * Updates an existing user in the repository.
      *
-     * @param userToUpdate The updated user information.
+     * @param userDTO The updated user information.
      * @throws UserValidatorException If the updated user data is invalid.
      * @throws RepositoryException    If the user to update is not found in the repository.
      */
-    public void updateUser(User userToUpdate) throws UserValidatorException, RepositoryException {
-        UserValidator.validate(userToUpdate);
-
-        if (this.usersRepository.findById(userToUpdate.getId()).isEmpty())
+    public void updateUser(UserDTO userDTO) throws UserValidatorException, RepositoryException {
+        Optional<User> userToUpdate = this.usersRepository.findById(userDTO.getId());
+        if (userToUpdate.isEmpty())
             throw new RepositoryException("User not found!");
 
-        this.usersRepository.save(userToUpdate);
+        User newUser = userToUpdate.get();
+        newUser.setFirstName(userDTO.getFirstName());
+        newUser.setLastName(userDTO.getLastName());
+        newUser.setEmail(userDTO.getEmail());
+
+        UserValidator.validate(newUser);
+
+        this.usersRepository.save(newUser);
     }
 
     /**

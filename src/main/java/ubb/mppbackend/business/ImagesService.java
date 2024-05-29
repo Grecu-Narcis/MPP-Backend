@@ -65,6 +65,8 @@ public class ImagesService {
             throw new Exception("User not found");
         }
 
+        this.removeUserProfileImage(requiredUser.get().getId());
+
         String imageUrl = UUID.randomUUID() + imageToSave.getOriginalFilename();
         Path uploadPath = Path.of(uploadDirectory, imageUrl);
         Files.copy(imageToSave.getInputStream(), uploadPath, StandardCopyOption.REPLACE_EXISTING);
