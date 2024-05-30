@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ubb.mppbackend.dto.CarDTO;
 import ubb.mppbackend.exceptions.RepositoryException;
 import ubb.mppbackend.models.car.Car;
 import ubb.mppbackend.models.car.CarMockGenerator;
@@ -21,13 +22,18 @@ import java.util.stream.Collectors;
 @Service
 public class CarsService {
     private final CarsRepositoryJPA carsRepository;
+    private final UsersRepositoryJPA usersRepository;
 
     @Autowired
-    public CarsService(CarsRepositoryJPA carsRepository) {
+    public CarsService(CarsRepositoryJPA carsRepository, UsersRepositoryJPA usersRepository) {
         this.carsRepository = carsRepository;
+        this.usersRepository = usersRepository;
 
-//        List<User> allManagers = usersRepositoryJPA.findAllByRole("MANAGER");
-//        CarMockGenerator.addFakeCars(100000, allManagers, this.carsRepository);
+//        List<User> allManagers = usersRepository.findAllByRole("MANAGER")
+//            .stream()
+//            .filter(user -> user.getEmail().equals("manager@gmail.com"))
+//            .toList();
+//        CarMockGenerator.addFakeCars(10000, allManagers, this.carsRepository);
     }
 
     /**
@@ -118,5 +124,17 @@ public class CarsService {
      */
     public List<Car> getAll() {
         return this.carsRepository.findAll();
+    }
+
+    public void addCar(CarDTO carDTO) throws RepositoryException {
+        Optional<User> owner = this.usersRepository.findById(carDTO.getOwnerId());
+
+        if (owner.isEmpty())
+            throw new RepositoryException("Owner not found!");
+
+        Car carToAdd = new Car(carDTO);
+        carToAdd.setOwner(owner.get());
+
+        this.carsRepository.save(carToAdd);
     }
 }

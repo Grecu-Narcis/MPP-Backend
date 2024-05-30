@@ -3,6 +3,7 @@ package ubb.mppbackend.models.car;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import ubb.mppbackend.dto.CarDTO;
 import ubb.mppbackend.models.user.User;
 
 /**
@@ -89,5 +90,15 @@ public class Car {
         this.mileage = mileage;
         this.fuelType = fuelType;
         this.owner = owner;
+    }
+
+    public Car(CarDTO carDTO) {
+        this.brand = carDTO.getBrand();
+        this.model = carDTO.getModel();
+        this.mileage = carDTO.getMileage();
+        this.fuelType = carDTO.getFuelType();
+        this.year = carDTO.getYear();
+        this.price = carDTO.getPrice();
+        this.pictureUrl = "default.png";
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ubb.mppbackend.business.CarsService;
 import ubb.mppbackend.business.UsersService;
 import ubb.mppbackend.config.security.JWTUtils;
+import ubb.mppbackend.dto.CarDTO;
 import ubb.mppbackend.models.car.Car;
 import ubb.mppbackend.models.user.User;
 
@@ -152,6 +153,18 @@ public class CarsController {
     public ResponseEntity<Integer> getCarsCountByOwnerId(@PathVariable String ownerId) {
         int count = this.carsService.countCarsByOwnerId(Long.parseLong(ownerId));
         return ResponseEntity.ok().body(count);
+    }
+
+    @PreAuthorize("hasAuthority('MANAGER')")
+    @PostMapping("/addCar")
+    public ResponseEntity<?> addCar(@RequestBody CarDTO carDTO, @RequestHeader("Authorization") String bearerToken) {
+        try {
+            this.carsService.addCar(carDTO);
+            return ResponseEntity.ok().body("Car added successfully!");
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     /**
