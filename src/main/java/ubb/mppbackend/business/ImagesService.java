@@ -103,7 +103,13 @@ public class ImagesService {
             return Files.readAllBytes(filePath);
         }
 
-        Path filePath = Path.of(this.uploadDirectory, profileImage.get().getImageUrl());
-        return Files.readAllBytes(filePath);
+        try {
+            Path filePath = Path.of(this.uploadDirectory, profileImage.get().getImageUrl());
+            return Files.readAllBytes(filePath);
+        }
+        catch (IOException e) {
+            Path filePath = Path.of(this.uploadDirectory, "dog.jpg");
+            return Files.readAllBytes(filePath);
+        }
     }
 }

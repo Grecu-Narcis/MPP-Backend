@@ -63,7 +63,9 @@ public class SecurityConfig {
                     "/api/auth/register",
                     "/api/users/ping",
                     "/api/car-dealers/**",
-                    "/websocket/**").permitAll()
+                    "/websocket/**",
+                    "api/ai/**",
+                    "api/location/**").permitAll()
 //                .requestMatchers("/api/users/getAll").hasRole("ADMIN")
                 .anyRequest().authenticated());
 
