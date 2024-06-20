@@ -65,8 +65,10 @@ public class SecurityConfig {
                     "/api/car-dealers/**",
                     "/websocket/**",
                     "api/ai/**",
-                    "api/location/**").permitAll()
-//                .requestMatchers("/api/users/getAll").hasRole("ADMIN")
+                    "api/location/**",
+                    "api/cars/getPageByOwnerId",
+                    "api/cars/getCarsCount/**",
+                    "api/cars/getCar/**").permitAll()
                 .anyRequest().authenticated());
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

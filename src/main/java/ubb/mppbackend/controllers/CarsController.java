@@ -157,7 +157,7 @@ public class CarsController {
 
     @PreAuthorize("hasAuthority('MANAGER')")
     @PostMapping("/addCar")
-    public ResponseEntity<?> addCar(@RequestBody CarDTO carDTO, @RequestHeader("Authorization") String bearerToken) {
+    public ResponseEntity<?> addCar(@RequestBody CarDTO carDTO) {
         try {
             this.carsService.addCar(carDTO);
             return ResponseEntity.ok().body("Car added successfully!");

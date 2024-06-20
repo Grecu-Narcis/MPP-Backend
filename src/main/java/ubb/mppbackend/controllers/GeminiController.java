@@ -33,7 +33,7 @@ public class GeminiController {
     @PostMapping("/generate")
     public ResponseEntity<?> generatePromptResponse(@RequestBody PromptDTO promptRequest) {
 //        String modelName = "gemini-1.5-flash-001";
-
+        System.out.println("hello");
         Optional<Car> requiredCar = this.carsRepositoryJPA.findById(Long.parseLong(promptRequest.getCarId()));
 
         if (requiredCar.isEmpty()) return ResponseEntity.ok().body("Sorry, I encountered an error!");
@@ -50,6 +50,7 @@ public class GeminiController {
             return ResponseHandler.getText(response);
         }
         catch (Exception e) {
+            System.out.println(e.getMessage());
             return "Sorry, I cannot answer right now!";
         }
     }
