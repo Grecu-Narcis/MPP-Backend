@@ -1,6 +1,7 @@
 package ubb.mppbackend.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/ai")
 public class GeminiController {
+    @Value("${AI_IP}")
+    private String aiMicroserviceHost;
     private final CarsRepositoryJPA carsRepositoryJPA;
 
     @Autowired
@@ -43,7 +46,7 @@ public class GeminiController {
             var request = new RequestDTO(textPrompt);
 
             WebClient webClient = WebClient.builder()
-                .baseUrl("http://localhost:8000")
+                .baseUrl(this.aiMicroserviceHost)
                 .build();
 
             return webClient.post()
