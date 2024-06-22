@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ubb.mppbackend.business.DealerLocationService;
-import ubb.mppbackend.dto.LocationDTO;
 import ubb.mppbackend.dto.UpdateLocationDTO;
 
 @RestController
 @RequestMapping("/api/location")
+@CrossOrigin(origins = "*")
 public class DealerLocationController {
     private final DealerLocationService dealerLocationService;
 
