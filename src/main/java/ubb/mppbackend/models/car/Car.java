@@ -99,6 +99,6 @@ public class Car {
         this.fuelType = carDTO.getFuelType();
         this.year = carDTO.getYear();
         this.price = carDTO.getPrice();
-        this.pictureUrl = "default.png";
+        this.pictureUrl = "default";
     }
 }

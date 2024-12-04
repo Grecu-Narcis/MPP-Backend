@@ -37,7 +37,7 @@ public class CarMockGenerator {
         String model = modelsByBrand.get(brand).get(random.nextInt(modelsByBrand.get(brand).size()));
         int year = faker.number().numberBetween(2000, 2022);
         int price = faker.number().numberBetween(5000, 50000);
-        String image = "default.png";
+        String image = "default";
         int mileage = faker.number().numberBetween(0, 500000);
         String fuelType = faker.options().option("Gasoline", "Diesel", "Electric");
         User owner = users.get(random.nextInt(users.size()));

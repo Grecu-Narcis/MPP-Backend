@@ -5,16 +5,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ubb.mppbackend.business.EmailService;
+import ubb.mppbackend.business.MailService;
 import ubb.mppbackend.dto.SendMailDTO;
 
 @RestController
 @RequestMapping("/api/mail")
 public class MailController {
-    private final EmailService emailService;
+    private final MailService emailService;
 
     @Autowired
-    public MailController(EmailService emailService) {
+    public MailController(MailService emailService) {
         this.emailService = emailService;
     }
 

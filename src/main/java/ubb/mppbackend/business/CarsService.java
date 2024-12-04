@@ -126,7 +126,7 @@ public class CarsService {
         return this.carsRepository.findAll();
     }
 
-    public void addCar(CarDTO carDTO) throws RepositoryException {
+    public Car addCar(CarDTO carDTO) throws RepositoryException {
         Optional<User> owner = this.usersRepository.findById(carDTO.getOwnerId());
 
         if (owner.isEmpty())
@@ -135,6 +135,6 @@ public class CarsService {
         Car carToAdd = new Car(carDTO);
         carToAdd.setOwner(owner.get());
 
-        this.carsRepository.save(carToAdd);
+        return this.carsRepository.save(carToAdd);
     }
 }

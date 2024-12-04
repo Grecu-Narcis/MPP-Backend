@@ -159,8 +159,8 @@ public class CarsController {
     @PostMapping("/addCar")
     public ResponseEntity<?> addCar(@RequestBody CarDTO carDTO) {
         try {
-            this.carsService.addCar(carDTO);
-            return ResponseEntity.ok().body("Car added successfully!");
+            Car addedCar = this.carsService.addCar(carDTO);
+            return ResponseEntity.ok().body(addedCar);
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

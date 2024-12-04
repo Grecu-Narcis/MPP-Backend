@@ -42,7 +42,7 @@ public class UsersService {
         this.usersRepository = usersRepository;
         this.messagingTemplate = messagingTemplate;
 
-//        UserMockGenerator.generateFakeData(1000, usersRepository);
+//        UserMockGenerator.generateFakeData(50, usersRepository);
     }
 
     /**

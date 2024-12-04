@@ -68,7 +68,8 @@ public class SecurityConfig {
                     "api/location/**",
                     "api/cars/getPageByOwnerId",
                     "api/cars/getCarsCount/**",
-                    "api/cars/getCar/**").permitAll()
+                    "api/cars/getCar/**",
+                    "api/car-images/**").permitAll()
                 .anyRequest().authenticated());
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

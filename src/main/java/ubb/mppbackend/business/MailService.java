@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * Service class responsible for sending emails asynchronously using JavaMailSender.
  */
 @Service
-public class EmailService {
+public class MailService {
     /** The mail sender object used for sending emails. */
     private final JavaMailSender mailSender;
 
@@ -26,7 +26,7 @@ public class EmailService {
      * @param mailSender The JavaMailSender object used for sending emails.
      */
     @Autowired
-    public EmailService(JavaMailSender mailSender) {
+    public MailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
@@ -42,7 +42,7 @@ public class EmailService {
         int currentAttempt = 0;
         boolean isSent = false;
 
-        while (currentAttempt < EmailService.MAX_RETRY_ATTEMPTS && !isSent) {
+        while (currentAttempt < MailService.MAX_RETRY_ATTEMPTS && !isSent) {
             try {
                 SimpleMailMessage messageToSend = this.createMail(destinationMail, mailSubject, mailBody);
                 mailSender.send(messageToSend);
@@ -51,9 +51,9 @@ public class EmailService {
             catch (MailException mailException) {
                 currentAttempt++;
 
-                if (currentAttempt < EmailService.MAX_RETRY_ATTEMPTS) {
+                if (currentAttempt < MailService.MAX_RETRY_ATTEMPTS) {
                     try {
-                        Thread.sleep(EmailService.RETRY_DELAY_MS);
+                        Thread.sleep(MailService.RETRY_DELAY_MS);
                     }
                     catch (InterruptedException interruptedException) {
                         Thread.currentThread().interrupt();
